@@ -15,7 +15,7 @@ class BronnoysundClientImpl(
 		const val BRONNOYSUND_URL = "https://data.brreg.no"
 	}
 
-	override fun hentEnheterPage(page: Int, size: Int): HentEnheterPage {
+	override fun hentModerenheterPage(page: Int, size: Int): HentModerenhetPage {
 		val request = Request.Builder()
 			.url("$bronnoysundUrl/enhetsregisteret/api/enheter?page=$page&size=$size")
 			.header("Accept", "application/json")
@@ -35,7 +35,7 @@ class BronnoysundClientImpl(
 		}
 	}
 
-	override fun hentUnderenheterPage(page: Int, size: Int): HentUnderenheterPage {
+	override fun hentUnderenheterPage(page: Int, size: Int): HentUnderenhetPage {
 		val request = Request.Builder()
 			.url("$bronnoysundUrl/enhetsregisteret/api/underenheter?page=$page&size=$size")
 			.header("Accept", "application/json")
@@ -55,13 +55,13 @@ class BronnoysundClientImpl(
 		}
 	}
 
-	private fun mapTilHentEnheterPage(dto: HentEnheterDto): HentEnheterPage {
-		return HentEnheterPage(
-			enheter = dto._embedded.enheter.map { HentEnheterPage.Enhet(
+	private fun mapTilHentEnheterPage(dto: HentEnheterDto): HentModerenhetPage {
+		return HentModerenhetPage(
+			enheter = dto._embedded.enheter.map { HentModerenhetPage.Moderenhet(
 				organisasjonsnummer = it.organisasjonsnummer,
 				navn = it.navn
 			) },
-			page = HentEnheterPage.Page(
+			page = HentModerenhetPage.Page(
 				size = dto.page.size,
 				totalElements = dto.page.totalElements,
 				totalPages = dto.page.totalPages,
@@ -70,14 +70,14 @@ class BronnoysundClientImpl(
 		)
 	}
 
-	private fun mapTilHentUnderenheterPage(dto: HentUnderenheterDto): HentUnderenheterPage {
-		return HentUnderenheterPage(
-			underenheter = dto._embedded.enheter.map { HentUnderenheterPage.Underenhet(
+	private fun mapTilHentUnderenheterPage(dto: HentUnderenheterDto): HentUnderenhetPage {
+		return HentUnderenhetPage(
+			underenheter = dto._embedded.enheter.map { HentUnderenhetPage.Underenhet(
 				organisasjonsnummer = it.organisasjonsnummer,
 				navn = it.navn,
 				overordnetEnhet = it.overordnetEnhet
 			) },
-			page = HentUnderenheterPage.Page(
+			page = HentUnderenhetPage.Page(
 				size = dto.page.size,
 				totalElements = dto.page.totalElements,
 				totalPages = dto.page.totalPages,

@@ -2,17 +2,17 @@ package no.nav.amt_enhetsregister.client
 
 interface BronnoysundClient {
 
-	fun hentEnheterPage(page: Int, size: Int): HentEnheterPage
+	fun hentModerenheterPage(page: Int, size: Int): HentModerenhetPage
 
-	fun hentUnderenheterPage(page: Int, size: Int): HentUnderenheterPage
+	fun hentUnderenheterPage(page: Int, size: Int): HentUnderenhetPage
 
 }
 
-data class HentEnheterPage(
-	val enheter: List<Enhet>,
+data class HentModerenhetPage(
+	val enheter: List<Moderenhet>,
 	val page: Page
 ) {
-	data class Enhet(
+	data class Moderenhet(
 		val organisasjonsnummer: String,
 		val navn: String,
 	)
@@ -25,7 +25,7 @@ data class HentEnheterPage(
 	)
 }
 
-data class HentUnderenheterPage(
+data class HentUnderenhetPage(
 	val underenheter: List<Underenhet>,
 	val page: Page
 ) {

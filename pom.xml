@@ -21,6 +21,8 @@
         <java.version>11</java.version>
         <kotlin.version>1.4.21</kotlin.version>
         <testcontainers.version>1.16.2</testcontainers.version>
+        <shedlock.version>4.29.0</shedlock.version>
+        <common.version>2.2021.09.17_07.09-67428a6422cc</common.version>
     </properties>
 
     <dependencies>
@@ -74,6 +76,21 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-provider-jdbc-template</artifactId>
+            <version>${shedlock.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-core</artifactId>
+            <version>${shedlock.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.common</groupId>
+            <artifactId>job</artifactId>
+            <version>${common.version}</version>
+        </dependency>
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
