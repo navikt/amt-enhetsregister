@@ -37,3 +37,7 @@ spec:
         - application: amt-tiltak
           namespace: amt
           cluster: dev-gcp
+    outbound:
+      external:
+        - host: data.brreg.no
+
