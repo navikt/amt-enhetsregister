@@ -1,14 +1,14 @@
 package no.nav.amt_enhetsregister.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import no.nav.amt_enhetsregister.utils.JsonUtils.getObjectMapper
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
 class BronnoysundClientImpl(
 	private val bronnoysundUrl: String = BRONNOYSUND_URL,
 	private val httpClient: OkHttpClient = OkHttpClient(),
-	private val objectMapper: ObjectMapper = ObjectMapper().registerKotlinModule(),
+	private val objectMapper: ObjectMapper = getObjectMapper(),
 ) : BronnoysundClient {
 
 	companion object {
