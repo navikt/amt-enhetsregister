@@ -40,4 +40,10 @@ spec:
     outbound:
       external:
         - host: data.brreg.no
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_12
+        databases:
+          - name: amt-enhetsregister-db
+            envVarPrefix: DB
 
