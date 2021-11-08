@@ -1,5 +1,6 @@
 package no.nav.amt_enhetsregister.repository
 
+import no.nav.amt_enhetsregister.repository.OppdaterEnhetJobbRepository.DefaultValue.ENHET_PAGE_SIZE
 import no.nav.amt_enhetsregister.repository.type.OppdaterEnhetJobb
 import no.nav.amt_enhetsregister.repository.type.OppdaterEnhetJobbStatus
 import no.nav.amt_enhetsregister.repository.type.OppdaterEnhetJobbType
@@ -11,7 +12,11 @@ import java.time.ZoneId
 @Repository
 class OppdaterEnhetJobbRepository(private val jdbcTemplate: JdbcTemplate) {
 
-	companion object Table {
+	private object DefaultValue {
+		const val ENHET_PAGE_SIZE = 5000
+	}
+
+	private companion object Table {
 		const val TABLE_NAME = "oppdater_enhet_jobb"
 
 		const val ID = "id"
@@ -40,12 +45,12 @@ class OppdaterEnhetJobbRepository(private val jdbcTemplate: JdbcTemplate) {
 
 	fun startJobb(type: OppdaterEnhetJobbType): OppdaterEnhetJobb {
 		val sql = """
-			INSERT INTO $TABLE_NAME ($ID, $TYPE, $STATUS) VALUES (?, ?::oppdater_enhet_jobb_type, ?::oppdater_enhet_jobb_status)
+			INSERT INTO $TABLE_NAME ($ID, $TYPE, $STATUS, $PAGE_SIZE) VALUES (?, ?::oppdater_enhet_jobb_type, ?::oppdater_enhet_jobb_status)
 		""".trimIndent()
 
 		val id = jdbcTemplate.query("SELECT nextval('$TABLE_NAME.$ID')") { rs, _ -> rs.getInt(ID) }.first()
 
-		jdbcTemplate.update(sql, id, type.name, OppdaterEnhetJobbStatus.IN_PROGRESS.name)
+		jdbcTemplate.update(sql, id, type.name, OppdaterEnhetJobbStatus.IN_PROGRESS.name, ENHET_PAGE_SIZE)
 
 		return hentJobb(id)
 	}

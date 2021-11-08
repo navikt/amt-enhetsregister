@@ -1,6 +1,7 @@
 package no.nav.amt_enhetsregister.service
 
 import no.nav.amt_enhetsregister.client.BronnoysundClient
+import no.nav.amt_enhetsregister.client.EnhetPage
 import no.nav.amt_enhetsregister.repository.EnhetRepository
 import no.nav.amt_enhetsregister.repository.OppdaterEnhetJobbRepository
 import no.nav.amt_enhetsregister.repository.type.*
@@ -17,10 +18,6 @@ class EnhetService(
 	) {
 
 	private val log = LoggerFactory.getLogger(this::class.java)
-
-	companion object {
-		const val ENHET_PAGE_SIZE = 5000
-	}
 
 	fun hentEnhet(organisasjonsnummer: String): Enhet? {
 		return enhetRepository.hentEnhet(organisasjonsnummer)
@@ -41,22 +38,23 @@ class EnhetService(
 
 		val jobb: OppdaterEnhetJobb = sisteJobb ?: oppdaterEnhetJobbRepository.startJobb(type)
 
-		jobbVidereMedOppdaterModerenheterJobb(jobb)
+		utfor(jobb)
 	}
 
-	fun jobbVidereMedOppdaterModerenheterJobb(jobb: OppdaterEnhetJobb) {
+	private fun utfor(jobb: OppdaterEnhetJobb) {
 		var pageCounter = jobb.currentPage
 		var totalPages: Int
 
 		try {
 			do {
-				val enheterPage = bronnoysundClient.hentModerenheterPage(pageCounter, ENHET_PAGE_SIZE)
+				val enheterPage = hentEnhetPage(jobb.type, pageCounter, jobb.pageSize)
 				val page = enheterPage.page
 
 				val enheter = enheterPage.enheter.map {
 					UpsertEnhetCmd(
 						organisasjonsnummer = it.organisasjonsnummer,
 						navn = it.navn,
+						overordnetEnhet = it.overordnetEnhet
 					)
 				}
 
@@ -80,6 +78,48 @@ class EnhetService(
 			log.error("Feil under oppdatering av enheter. pageCounter=$pageCounter", exception)
 			oppdaterEnhetJobbRepository.markerJobbPauset(jobb.id)
 		}
+	}
+
+	private fun hentEnhetPage(jobbType: OppdaterEnhetJobbType, page: Int, size: Int): HentEnhetPage {
+		when (jobbType) {
+			OppdaterEnhetJobbType.MODERENHET -> {
+				val moderenhetPage = bronnoysundClient.hentModerenheterPage(page, size)
+
+				return HentEnhetPage(
+					enheter = moderenhetPage.moderenheter.map { HentEnhetPage.Enhet(
+						organisasjonsnummer = it.organisasjonsnummer,
+						navn = it.navn
+					) },
+					page = moderenhetPage.page
+				)
+			}
+			OppdaterEnhetJobbType.UNDERENHET -> {
+				val underEnhetPage = bronnoysundClient.hentUnderenheterPage(page, size)
+
+				return HentEnhetPage(
+					enheter = underEnhetPage.underenheter.map { HentEnhetPage.Enhet(
+						organisasjonsnummer = it.organisasjonsnummer,
+						navn = it.navn,
+						overordnetEnhet = it.overordnetEnhet
+					) },
+					page = underEnhetPage.page
+				)
+			}
+			else -> {
+				throw IllegalArgumentException("Ugyldig jobb type $jobbType")
+			}
+		}
+	}
+
+	private data class HentEnhetPage(
+		val enheter: List<Enhet>,
+		val page: EnhetPage
+	) {
+		data class Enhet(
+			val organisasjonsnummer: String,
+			val navn: String,
+			val overordnetEnhet: String? = null
+		)
 	}
 
 }

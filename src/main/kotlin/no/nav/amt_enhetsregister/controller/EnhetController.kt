@@ -16,7 +16,7 @@ class EnhetController(private val enhetService: EnhetService) {
 
 	@GetMapping
 	fun hentEnhet(@RequestParam("organisasjonsnummer") organisasjonsnummer: String): EnhetDto {
-		return enhetService.hentEnhet(organisasjonsnummer)?.tilDto() ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "")
+		return enhetService.hentEnhet(organisasjonsnummer)?.tilDto() ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Fant ikke enhet")
 	}
 
 }

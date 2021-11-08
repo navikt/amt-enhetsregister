@@ -57,11 +57,11 @@ class BronnoysundClientImpl(
 
 	private fun mapTilHentEnheterPage(dto: HentEnheterDto): HentModerenhetPage {
 		return HentModerenhetPage(
-			enheter = dto._embedded.enheter.map { HentModerenhetPage.Moderenhet(
+			moderenheter = dto._embedded.enheter.map { HentModerenhetPage.Moderenhet(
 				organisasjonsnummer = it.organisasjonsnummer,
 				navn = it.navn
 			) },
-			page = HentModerenhetPage.Page(
+			page = EnhetPage(
 				size = dto.page.size,
 				totalElements = dto.page.totalElements,
 				totalPages = dto.page.totalPages,
@@ -77,7 +77,7 @@ class BronnoysundClientImpl(
 				navn = it.navn,
 				overordnetEnhet = it.overordnetEnhet
 			) },
-			page = HentUnderenhetPage.Page(
+			page = EnhetPage(
 				size = dto.page.size,
 				totalElements = dto.page.totalElements,
 				totalPages = dto.page.totalPages,
