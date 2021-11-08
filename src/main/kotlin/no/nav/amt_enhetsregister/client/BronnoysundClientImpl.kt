@@ -72,7 +72,7 @@ class BronnoysundClientImpl(
 
 	private fun mapTilHentUnderenheterPage(dto: HentUnderenheterDto): HentUnderenhetPage {
 		return HentUnderenhetPage(
-			underenheter = dto._embedded.enheter.map { HentUnderenhetPage.Underenhet(
+			underenheter = dto._embedded.underenheter.map { HentUnderenhetPage.Underenhet(
 				organisasjonsnummer = it.organisasjonsnummer,
 				navn = it.navn,
 				overordnetEnhet = it.overordnetEnhet
@@ -114,7 +114,7 @@ private data class HentUnderenheterDto(
 	val page: Page
 ) {
 	data class Embedded(
-		val enheter: List<Underenhet>
+		val underenheter: List<Underenhet>
 	) {
 		data class Underenhet(
 			val organisasjonsnummer: String,

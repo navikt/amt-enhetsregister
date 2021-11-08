@@ -1,0 +1,123 @@
+{
+  "_embedded": {
+    "enheter": [
+      {
+        "organisasjonsnummer": "111222333",
+        "navn": "Moderenhet 1",
+        "organisasjonsform": {
+          "kode": "ENK",
+          "beskrivelse": "Enkeltpersonforetak",
+          "_links": {
+            "self": {
+              "href": "https://data.brreg.no/enhetsregisteret/api/organisasjonsformer/ENK"
+            }
+          }
+        },
+        "registreringsdatoEnhetsregisteret": "2013-02-30",
+        "registrertIMvaregisteret": true,
+        "naeringskode1": {
+          "beskrivelse": "Beplantning av hager og parkanlegg",
+          "kode": "81.300"
+        },
+        "antallAnsatte": 0,
+        "forretningsadresse": {
+          "land": "Norge",
+          "landkode": "NO",
+          "postnummer": "6682",
+          "poststed": "OSLO",
+          "adresse": [
+            "Testberg 12"
+          ],
+          "kommune": "OSLO",
+          "kommunenummer": "3322"
+        },
+        "institusjonellSektorkode": {
+          "kode": "8200",
+          "beskrivelse": "Personlig næringsdrivende"
+        },
+        "registrertIForetaksregisteret": true,
+        "registrertIStiftelsesregisteret": false,
+        "registrertIFrivillighetsregisteret": false,
+        "konkurs": false,
+        "underAvvikling": false,
+        "underTvangsavviklingEllerTvangsopplosning": false,
+        "maalform": "Bokmål",
+        "_links": {
+          "self": {
+            "href": "https://data.brreg.no/enhetsregisteret/api/enheter/111222333"
+          }
+        }
+      },
+      {
+        "organisasjonsnummer": "222333444",
+        "navn": "Moderenhet 2",
+        "organisasjonsform": {
+          "kode": "ENK",
+          "beskrivelse": "Enkeltpersonforetak",
+          "_links": {
+            "self": {
+              "href": "https://data.brreg.no/enhetsregisteret/api/organisasjonsformer/ENK"
+            }
+          }
+        },
+        "registreringsdatoEnhetsregisteret": "2001-07-03",
+        "registrertIMvaregisteret": false,
+        "naeringskode1": {
+          "beskrivelse": "Annen undervisning ikke nevnt annet sted",
+          "kode": "85.599"
+        },
+        "antallAnsatte": 0,
+        "forretningsadresse": {
+          "land": "Norge",
+          "landkode": "NO",
+          "postnummer": "0564",
+          "poststed": "OSLO",
+          "adresse": [
+            "Adresseveien 54"
+          ],
+          "kommune": "OSLO",
+          "kommunenummer": "0301"
+        },
+        "institusjonellSektorkode": {
+          "kode": "8200",
+          "beskrivelse": "Personlig næringsdrivende"
+        },
+        "registrertIForetaksregisteret": false,
+        "registrertIStiftelsesregisteret": false,
+        "registrertIFrivillighetsregisteret": false,
+        "konkurs": false,
+        "underAvvikling": false,
+        "underTvangsavviklingEllerTvangsopplosning": false,
+        "maalform": "Bokmål",
+        "_links": {
+          "self": {
+            "href": "https://data.brreg.no/enhetsregisteret/api/enheter/222333444"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "first": {
+      "href": "https://data.brreg.no/enhetsregisteret/api/enheter/?page=0&size=2"
+    },
+    "prev": {
+      "href": "https://data.brreg.no/enhetsregisteret/api/enheter/?page=3&size=2"
+    },
+    "self": {
+      "href": "https://data.brreg.no/enhetsregisteret/api/enheter/?size=2&page=4"
+    },
+    "next": {
+      "href": "https://data.brreg.no/enhetsregisteret/api/enheter/?page=5&size=2"
+    },
+    "last": {
+      "href": "https://data.brreg.no/enhetsregisteret/api/enheter/?page=150849&size=2"
+    }
+  },
+  "page": {
+    "size": 2,
+    "totalElements": 1055949,
+    "totalPages": 150850,
+    "number": 4
+  }
+}
