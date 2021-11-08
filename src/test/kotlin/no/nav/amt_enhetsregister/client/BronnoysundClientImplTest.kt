@@ -3,8 +3,8 @@ package no.nav.amt_enhetsregister.client
 import no.nav.amt_enhetsregister.utils.ResourceUtils.getResourceAsText
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
-import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 
 class BronnoysundClientImplTest {

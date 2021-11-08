@@ -13,7 +13,7 @@ import java.time.ZoneId
 class OppdaterEnhetJobbRepository(private val jdbcTemplate: JdbcTemplate) {
 
 	private object DefaultValue {
-		const val ENHET_PAGE_SIZE = 10_000
+		const val ENHET_PAGE_SIZE = 2500
 	}
 
 	private companion object Table {

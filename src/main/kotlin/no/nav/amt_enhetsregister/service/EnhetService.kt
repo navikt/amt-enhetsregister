@@ -17,6 +17,10 @@ class EnhetService(
 	private val bronnoysundClient: BronnoysundClient
 	) {
 
+	companion object {
+		const val OPPDATER_PROGRESJON_PR_ANTALL_PAGE = 10
+	}
+
 	private val log = LoggerFactory.getLogger(this::class.java)
 
 	fun hentEnhet(organisasjonsnummer: String): Enhet? {
@@ -28,15 +32,19 @@ class EnhetService(
 
 		// Vent minst 1 time før en pauset jobb blir jobbet videre på
 		if (sisteJobb?.status == OppdaterEnhetJobbStatus.PAUSED && sisteJobb.pausedAt!!.isAfter(oneHourAgo())) {
+			log.info("Venter med å starte videre på pauset jobb ${sisteJobb.id} av type $type. Jobben ble pauset ${sisteJobb.pausedAt}")
 			return
 		}
 
 		// Vent minst 1 dag før vi starter neste jobb
 		if (sisteJobb?.status == OppdaterEnhetJobbStatus.COMPLETED && sisteJobb.finishedAt!!.isAfter(oneDayAgo())) {
+			log.info("Venter med å starte ny jobb av type $type. Forrige jobb ble ferdig ${sisteJobb.finishedAt}")
 			return
 		}
 
 		val jobb: OppdaterEnhetJobb = sisteJobb ?: oppdaterEnhetJobbRepository.startJobb(type)
+
+		log.info("Starter på utføring av jobb ${jobb.id}. currentPage=${jobb.currentPage} totalPages=${jobb.totalPages} pageSize=${jobb.pageSize}")
 
 		utfor(jobb)
 	}
@@ -50,6 +58,8 @@ class EnhetService(
 				val enheterPage = hentEnhetPage(jobb.type, pageCounter, jobb.pageSize)
 				val page = enheterPage.page
 
+				log.info("Hentet enheter... currentPage=${page.number} size=${enheterPage.enheter.size}")
+
 				val enheter = enheterPage.enheter.map {
 					UpsertEnhetCmd(
 						organisasjonsnummer = it.organisasjonsnummer,
@@ -60,7 +70,9 @@ class EnhetService(
 
 				enhetRepository.upsertEnheter(enheter)
 
-				if (enheterPage.page.totalPages % 10 == 0) {
+				if (enheterPage.page.totalPages % OPPDATER_PROGRESJON_PR_ANTALL_PAGE == 0) {
+					log.info("Oppdaterer progresjon... currentPage=${page.number} totalPages=${page.totalPages}")
+
 					oppdaterEnhetJobbRepository.oppdaterProgresjon(
 						jobbId = jobb.id,
 						currentPage = page.number,
@@ -73,6 +85,7 @@ class EnhetService(
 			} while (pageCounter < totalPages)
 
 			oppdaterEnhetJobbRepository.fullforJobb(jobb.id)
+			log.info("Oppdatering av enheter med type ${jobb.type} er fullført")
 		} catch (exception: Exception) {
 			log.error("Feil under oppdatering av enheter. pageCounter=$pageCounter", exception)
 			oppdaterEnhetJobbRepository.markerJobbPauset(jobb.id)

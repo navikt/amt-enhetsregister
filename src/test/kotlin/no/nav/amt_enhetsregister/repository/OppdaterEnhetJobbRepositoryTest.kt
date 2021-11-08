@@ -42,7 +42,7 @@ class OppdaterEnhetJobbRepositoryTest {
 		assertEquals(5, jobb.id)
 		assertEquals(OppdaterEnhetJobbType.MODERENHET, jobb.type)
 		assertEquals(0, jobb.currentPage)
-		assertEquals(10_000, jobb.pageSize)
+		assertEquals(2500, jobb.pageSize)
 		assertEquals(0, jobb.totalPages)
 		assertEquals(OppdaterEnhetJobbStatus.IN_PROGRESS, jobb.status)
 	}
