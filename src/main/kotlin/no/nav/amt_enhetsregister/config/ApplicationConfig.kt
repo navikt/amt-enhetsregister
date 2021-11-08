@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Profile
 import org.springframework.jdbc.core.JdbcTemplate
 
 @Configuration
-@Profile("!local")
 @EnableJwtTokenValidation
 class ApplicationConfig {
 
@@ -22,6 +21,7 @@ class ApplicationConfig {
 		return ShedLockLeaderElectionClient(JdbcTemplateLockProvider(jdbcTemplate))
 	}
 
+	@Profile("default")
 	@Bean
 	fun bronnoysundClient(): BronnoysundClient {
 		return BronnoysundClientImpl()
