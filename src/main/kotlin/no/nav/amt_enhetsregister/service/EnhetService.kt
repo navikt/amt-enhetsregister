@@ -64,7 +64,6 @@ class EnhetService(
 					oppdaterEnhetJobbRepository.oppdaterProgresjon(
 						jobbId = jobb.id,
 						currentPage = page.number,
-						pageSize = page.size,
 						totalPages = page.totalPages
 					)
 				}

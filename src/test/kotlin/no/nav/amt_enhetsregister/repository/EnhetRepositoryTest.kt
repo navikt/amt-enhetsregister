@@ -3,6 +3,7 @@ package no.nav.amt_enhetsregister.repository
 import no.nav.amt_enhetsregister.repository.type.UpsertEnhetCmd
 import no.nav.amt_enhetsregister.utils.LocalPostgresDatabase.cleanAndMigrate
 import no.nav.amt_enhetsregister.utils.LocalPostgresDatabase.createDataSource
+import no.nav.amt_enhetsregister.utils.ResourceUtils
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -31,7 +32,7 @@ class EnhetRepositoryTest {
 		jdbcTemplate = JdbcTemplate(dataSource)
 		enhetRepository = EnhetRepository(jdbcTemplate)
 
-		jdbcTemplate.update(EnhetRepositoryTest::class.java.classLoader.getResource("db/enhet-data.sql").readText())
+		jdbcTemplate.update(ResourceUtils.getResourceAsText("/db/enhet-data.sql"))
 	}
 
 	@Test

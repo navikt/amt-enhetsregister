@@ -13,7 +13,7 @@ import java.time.ZoneId
 class OppdaterEnhetJobbRepository(private val jdbcTemplate: JdbcTemplate) {
 
 	private object DefaultValue {
-		const val ENHET_PAGE_SIZE = 5000
+		const val ENHET_PAGE_SIZE = 10_000
 	}
 
 	private companion object Table {
@@ -38,17 +38,17 @@ class OppdaterEnhetJobbRepository(private val jdbcTemplate: JdbcTemplate) {
 				totalPages = rs.getInt(TOTAL_PAGES),
 				type = OppdaterEnhetJobbType.valueOf(rs.getString(TYPE)),
 				status = OppdaterEnhetJobbStatus.valueOf(rs.getString(STATUS)),
-				finishedAt = rs.getTimestamp(FINISHED_AT).toLocalDateTime().atZone(ZoneId.systemDefault()),
-				pausedAt = rs.getTimestamp(PAUSED_AT).toLocalDateTime().atZone(ZoneId.systemDefault())
+				finishedAt = rs.getTimestamp(FINISHED_AT)?.toLocalDateTime()?.atZone(ZoneId.systemDefault()),
+				pausedAt = rs.getTimestamp(PAUSED_AT)?.toLocalDateTime()?.atZone(ZoneId.systemDefault())
 			)
 		}
 
 	fun startJobb(type: OppdaterEnhetJobbType): OppdaterEnhetJobb {
 		val sql = """
-			INSERT INTO $TABLE_NAME ($ID, $TYPE, $STATUS, $PAGE_SIZE) VALUES (?, ?::oppdater_enhet_jobb_type, ?::oppdater_enhet_jobb_status)
+			INSERT INTO $TABLE_NAME ($ID, $TYPE, $STATUS, $PAGE_SIZE) VALUES (?, ?::oppdater_enhet_jobb_type, ?::oppdater_enhet_jobb_status, ?)
 		""".trimIndent()
 
-		val id = jdbcTemplate.query("SELECT nextval('$TABLE_NAME.$ID')") { rs, _ -> rs.getInt(ID) }.first()
+		val id = jdbcTemplate.query("SELECT nextval('${TABLE_NAME}_${ID}_seq')") { rs, _ -> rs.getInt(1) }.first()
 
 		jdbcTemplate.update(sql, id, type.name, OppdaterEnhetJobbStatus.IN_PROGRESS.name, ENHET_PAGE_SIZE)
 
@@ -63,13 +63,13 @@ class OppdaterEnhetJobbRepository(private val jdbcTemplate: JdbcTemplate) {
 		return jdbcTemplate.query(sql, rowMapper, jobbId).first()
 	}
 
-	fun oppdaterProgresjon(jobbId: Int, currentPage: Int, pageSize: Int, totalPages: Int) {
+	fun oppdaterProgresjon(jobbId: Int, currentPage: Int, totalPages: Int) {
 		val sql = """
 			UPDATE $TABLE_NAME SET $STATUS = ?::oppdater_enhet_jobb_status,
-			$CURRENT_PAGE = ?, $PAGE_SIZE = ?, $TOTAL_PAGES = ? WHERE $ID = ?
+			$CURRENT_PAGE = ?, $TOTAL_PAGES = ? WHERE $ID = ?
 		""".trimIndent()
 
-		jdbcTemplate.update(sql, OppdaterEnhetJobbStatus.IN_PROGRESS.name, currentPage, pageSize, totalPages, jobbId)
+		jdbcTemplate.update(sql, OppdaterEnhetJobbStatus.IN_PROGRESS.name, currentPage, totalPages, jobbId)
 	}
 
 	fun markerJobbPauset(jobbId: Int) {
@@ -90,7 +90,7 @@ class OppdaterEnhetJobbRepository(private val jdbcTemplate: JdbcTemplate) {
 
 	fun hentSisteJobb(type: OppdaterEnhetJobbType): OppdaterEnhetJobb? {
 		val sql = """
-			SELECT * FROM $TABLE_NAME WHERE $TYPE = ?::oppdater_enhet_jobb_status ORDER BY $ID DESC LIMIT 1
+			SELECT * FROM $TABLE_NAME WHERE $TYPE = ?::oppdater_enhet_jobb_type ORDER BY $ID DESC LIMIT 1
 		""".trimIndent()
 
 		return jdbcTemplate.query(sql, rowMapper, type.name).firstOrNull()
