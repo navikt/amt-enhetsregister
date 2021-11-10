@@ -21,7 +21,7 @@ class OppdaterAlleEnheterController(private val oppdaterAlleEnheterService: Oppd
 			throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
 		}
 
-		JobRunner.run("") { oppdaterAlleEnheterService.oppdaterAlleModerenheter() }
+		JobRunner.runAsync("oppdater_alle_moderenheter") { oppdaterAlleEnheterService.oppdaterAlleModerenheter() }
 	}
 
 	@Unprotected
@@ -31,7 +31,7 @@ class OppdaterAlleEnheterController(private val oppdaterAlleEnheterService: Oppd
 			throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
 		}
 
-		JobRunner.run("") { oppdaterAlleEnheterService.oppdaterAlleUnderenheter() }
+		JobRunner.runAsync("oppdater_alle_underenheter") { oppdaterAlleEnheterService.oppdaterAlleUnderenheter() }
 	}
 
 	private fun erRequestFraLocalhost(remoteAddr: String): Boolean {

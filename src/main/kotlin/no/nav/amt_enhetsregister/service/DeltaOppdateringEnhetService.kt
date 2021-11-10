@@ -17,7 +17,7 @@ class DeltaOppdateringEnhetService(
 ) {
 
 	companion object {
-		const val OPPDATERINGER_SIZE = 100
+		const val OPPDATERINGER_SIZE = 500
 	}
 
 	private val oppdateringTyperSomSkalSkrivesTilDb = listOf(
