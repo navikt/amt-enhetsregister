@@ -24,7 +24,7 @@ spec:
   resources:
     limits:
       cpu: "1"
-      memory: 1024Mi
+      memory: 4096Mi # Trenger mye minne når man skal laste ned alle enheter
     requests:
       cpu: 250m
       memory: 512Mi

@@ -5,6 +5,7 @@ import no.nav.amt_enhetsregister.utils.JsonUtils.getObjectMapper
 import no.nav.amt_enhetsregister.utils.JsonUtils.listCollectionType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import java.time.LocalDateTime
 import java.util.zip.GZIPInputStream
 
 class BronnoysundClientImpl(
@@ -17,43 +18,104 @@ class BronnoysundClientImpl(
 		const val BRONNOYSUND_URL = "https://data.brreg.no"
 	}
 
-	override fun hentModerenheterPage(page: Int, size: Int): HentModerenhetPage {
+	override fun hentModerenhetOppdateringer(fraOppdateringId: Int, size: Int): List<EnhetOppdatering> {
 		val request = Request.Builder()
-			.url("$bronnoysundUrl/enhetsregisteret/api/enheter?page=$page&size=$size")
+			.url("$bronnoysundUrl/enhetsregisteret/api/oppdateringer/enheter?oppdateringsid=$fraOppdateringId&size=$size")
 			.header("Accept", "application/json")
 			.get()
 			.build()
 
 		httpClient.newCall(request).execute().use { response ->
 			if (!response.isSuccessful) {
-				throw RuntimeException("Klarte ikke å hente enheter page=$page size=$size. Status: ${response.code}")
+				throw RuntimeException("Klarte ikke å hente moderenhet oppdateringer. Status: ${response.code}")
 			}
 
 			val body = response.body?.string() ?: throw RuntimeException("Body is missing")
 
-			val dto = objectMapper.readValue(body, HentEnheterDto::class.java)
+			val oppdateringer = objectMapper.readValue(body, HentModerenhetOppdateringerResponse::class.java)
 
-			return mapTilHentEnheterPage(dto)
+			return oppdateringer._embedded.oppdaterteEnheter.map {
+				EnhetOppdatering(
+					oppdateringId = it.oppdateringsid,
+					organisasjonsnummer = it.organisasjonsnummer,
+					endringstype = EnhetOppdateringType.valueOf(it.endringstype),
+					dato = LocalDateTime.parse(it.dato)
+				)
+			}
 		}
 	}
 
-	override fun hentUnderenheterPage(page: Int, size: Int): HentUnderenhetPage {
+	override fun hentUnderenhetOppdateringer(fraOppdateringId: Int, size: Int): List<EnhetOppdatering> {
 		val request = Request.Builder()
-			.url("$bronnoysundUrl/enhetsregisteret/api/underenheter?page=$page&size=$size")
+			.url("$bronnoysundUrl/enhetsregisteret/api/oppdateringer/underenheter?oppdateringsid=$fraOppdateringId&size=$size")
 			.header("Accept", "application/json")
 			.get()
 			.build()
 
 		httpClient.newCall(request).execute().use { response ->
 			if (!response.isSuccessful) {
-				throw RuntimeException("Klarte ikke å hente enheter page=$page size=$size. Status: ${response.code}")
+				throw RuntimeException("Klarte ikke å hente underenhet oppdateringer. Status: ${response.code}")
 			}
 
 			val body = response.body?.string() ?: throw RuntimeException("Body is missing")
 
-			val dto = objectMapper.readValue(body, HentUnderenheterDto::class.java)
+			val oppdateringer = objectMapper.readValue(body, HentUnderenhetOppdateringerResponse::class.java)
 
-			return mapTilHentUnderenheterPage(dto)
+			return oppdateringer._embedded.oppdaterteUnderenheter.map {
+				EnhetOppdatering(
+					oppdateringId = it.oppdateringsid,
+					organisasjonsnummer = it.organisasjonsnummer,
+					endringstype = EnhetOppdateringType.valueOf(it.endringstype),
+					dato = LocalDateTime.parse(it.dato)
+				)
+			}
+		}
+	}
+
+	override fun hentModerenhet(organisasjonsnummer: String): Moderenhet {
+		val request = Request.Builder()
+			.url("$bronnoysundUrl/enhetsregisteret/api/enheter/$organisasjonsnummer")
+			.header("Accept", "application/json")
+			.get()
+			.build()
+
+		httpClient.newCall(request).execute().use { response ->
+			if (!response.isSuccessful) {
+				throw RuntimeException("Klarte ikke å hente moderenhet. Status: ${response.code}")
+			}
+
+			val body = response.body?.string() ?: throw RuntimeException("Body is missing")
+
+			val moderenhetResponse = objectMapper.readValue(body, HentModerenhetResponse::class.java)
+
+			return Moderenhet(
+				organisasjonsnummer = moderenhetResponse.organisasjonsnummer,
+				navn = moderenhetResponse.navn
+			)
+		}
+	}
+
+	override fun hentUnderenhet(organisasjonsnummer: String): Underenhet {
+		val request = Request.Builder()
+			.url("$bronnoysundUrl/enhetsregisteret/api/underenheter/$organisasjonsnummer")
+			.header("Accept", "application/json")
+			.get()
+			.build()
+
+		httpClient.newCall(request).execute().use { response ->
+			if (!response.isSuccessful) {
+				throw RuntimeException("Klarte ikke å hente underenhet. Status: ${response.code}")
+			}
+
+			val body = response.body?.string() ?: throw RuntimeException("Body is missing")
+
+			val underenhetResponse = objectMapper.readValue(body, HentUnderenhetResponse::class.java)
+
+			return Underenhet(
+				organisasjonsnummer = underenhetResponse.organisasjonsnummer,
+				navn = underenhetResponse.navn,
+				overordnetEnhet = underenhetResponse.overordnetEnhet
+			)
 		}
 	}
 
@@ -97,80 +159,45 @@ class BronnoysundClientImpl(
 		}
 	}
 
-	private fun mapTilHentEnheterPage(dto: HentEnheterDto): HentModerenhetPage {
-		return HentModerenhetPage(
-			moderenheter = dto._embedded.enheter.map { Moderenhet(
-				organisasjonsnummer = it.organisasjonsnummer,
-				navn = it.navn
-			) },
-			page = EnhetPage(
-				size = dto.page.size,
-				totalElements = dto.page.totalElements,
-				totalPages = dto.page.totalPages,
-				number = dto.page.number
-			)
-		)
-	}
-
-	private fun mapTilHentUnderenheterPage(dto: HentUnderenheterDto): HentUnderenhetPage {
-		return HentUnderenhetPage(
-			underenheter = dto._embedded.underenheter.map { Underenhet(
-				organisasjonsnummer = it.organisasjonsnummer,
-				navn = it.navn,
-				overordnetEnhet = it.overordnetEnhet
-			) },
-			page = EnhetPage(
-				size = dto.page.size,
-				totalElements = dto.page.totalElements,
-				totalPages = dto.page.totalPages,
-				number = dto.page.number
-			)
-		)
-	}
-
 }
 
-private data class HentEnheterDto(
+private data class HentModerenhetResponse(
+	val organisasjonsnummer: String,
+	val navn: String,
+)
+
+private data class HentUnderenhetResponse(
+	val organisasjonsnummer: String,
+	val navn: String,
+	val overordnetEnhet: String
+)
+
+private data class HentModerenhetOppdateringerResponse(
 	val _embedded: Embedded,
-	val page: Page
 ) {
 	data class Embedded(
-		val enheter: List<Enhet>
+		val oppdaterteEnheter: List<EnhetOppdatering>
 	) {
-		data class Enhet(
+		data class EnhetOppdatering(
+			val oppdateringsid: Int,
+			val dato: String,
 			val organisasjonsnummer: String,
-			val navn: String,
+			val endringstype: String,
 		)
 	}
-
-	data class Page(
-		val size: Int,
-		val totalElements: Int,
-		val totalPages: Int,
-		val number: Int
-	)
 }
 
-private data class HentUnderenheterDto(
+private data class HentUnderenhetOppdateringerResponse(
 	val _embedded: Embedded,
-	val page: Page
 ) {
 	data class Embedded(
-		val underenheter: List<Underenhet>
+		val oppdaterteUnderenheter: List<EnhetOppdatering>
 	) {
-		data class Underenhet(
+		data class EnhetOppdatering(
+			val oppdateringsid: Int,
+			val dato: String,
 			val organisasjonsnummer: String,
-			val navn: String,
-			val overordnetEnhet: String
+			val endringstype: String,
 		)
 	}
-
-	data class Page(
-		val size: Int,
-		val totalElements: Int,
-		val totalPages: Int,
-		val number: Int
-	)
 }
-
-

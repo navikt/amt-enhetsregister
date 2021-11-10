@@ -1,10 +1,18 @@
 package no.nav.amt_enhetsregister.client
 
+import java.time.LocalDateTime
+
 interface BronnoysundClient {
 
-	fun hentModerenheterPage(page: Int, size: Int): HentModerenhetPage
+	fun hentModerenhetOppdateringer(fraOppdateringId: Int, size: Int): List<EnhetOppdatering>
 
-	fun hentUnderenheterPage(page: Int, size: Int): HentUnderenhetPage
+	fun hentUnderenhetOppdateringer(fraOppdateringId: Int, size: Int): List<EnhetOppdatering>
+
+
+	fun hentModerenhet(organisasjonsnummer: String): Moderenhet
+
+	fun hentUnderenhet(organisasjonsnummer: String): Underenhet
+
 
 	fun hentAlleModerenheter(): List<Moderenhet>
 
@@ -12,14 +20,19 @@ interface BronnoysundClient {
 
 }
 
-data class HentModerenhetPage(
-	val moderenheter: List<Moderenhet>,
-	val page: EnhetPage
-)
+enum class EnhetOppdateringType(val type: String) {
+	UKJENT("Ukjent"), 			// Ukjent type endring. Ofte fordi endringen har skjedd før endringstype ble innført.
+	NY("Ny"), 					// Enheten har blitt lagt til i Enhetsregisteret
+	ENDRING("Endring"), 		// Enheten har blitt endret i Enhetsregisteret
+	SLETTING("Sletting"), 		// Enheten har blitt slettet fra Enhetsregisteret
+	FJERNET("Fjernet"), 		// Enheten har blitt fjernet fra Åpne Data. Eventuelle kopier skal også fjerne enheten.
+}
 
-data class HentUnderenhetPage(
-	val underenheter: List<Underenhet>,
-	val page: EnhetPage
+data class EnhetOppdatering(
+	val oppdateringId: Int,
+	val dato: LocalDateTime,
+	val organisasjonsnummer: String,
+	val endringstype: EnhetOppdateringType,
 )
 
 data class Moderenhet(
@@ -32,12 +45,4 @@ data class Underenhet(
 	val navn: String,
 	val overordnetEnhet: String
 )
-
-data class EnhetPage(
-	val size: Int,
-	val totalElements: Int,
-	val totalPages: Int,
-	val number: Int
-)
-
 

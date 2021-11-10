@@ -1,30 +1,17 @@
-CREATE TYPE oppdater_enhet_jobb_type AS ENUM (
+CREATE TYPE enhet_type AS ENUM (
     'MODERENHET',
     'UNDERENHET'
     );
 
-CREATE TYPE oppdater_enhet_jobb_status AS ENUM (
-    'IN_PROGRESS',
-    'COMPLETED',
-    'PAUSED'
-    );
-
-CREATE TABLE oppdater_enhet_jobb
+CREATE TABLE delta_enhet_oppdatering
 (
-    id           SERIAL PRIMARY KEY,
-    current_page INT                        NOT NULL DEFAULT 0,
-    page_size    INT                        NOT NULL DEFAULT 0,
-    total_pages  INT                        NOT NULL DEFAULT 0,
-    type         oppdater_enhet_jobb_type   NOT NULL,
-    status       oppdater_enhet_jobb_status NOT NULL,
-    started_at   TIMESTAMP WITH TIME ZONE   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    paused_at    TIMESTAMP WITH TIME ZONE,
-    finished_at  TIMESTAMP WITH TIME ZONE,
-    updated_at   TIMESTAMP WITH TIME ZONE   NOT NULL DEFAULT CURRENT_TIMESTAMP
+    id                SERIAL PRIMARY KEY,
+    oppdatering_id    INT                      NOT NULL,
+    enhet_type        enhet_type               NOT NULL,
+    siste_oppdatering TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TRIGGER set_timestamp
-    BEFORE UPDATE
-    ON oppdater_enhet_jobb
-    FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
+-- Setter oppdatering_id til maks verdi for å forhindre oppdatering helt fra starten.
+-- Når man skal starte delta oppdatering så må man manuelt endre til ønsket id å starte fra
+INSERT INTO delta_enhet_oppdatering (oppdatering_id, enhet_type) VALUES (2147483647, 'MODERENHET');
+INSERT INTO delta_enhet_oppdatering (oppdatering_id, enhet_type) VALUES (2147483647, 'UNDERENHET');
