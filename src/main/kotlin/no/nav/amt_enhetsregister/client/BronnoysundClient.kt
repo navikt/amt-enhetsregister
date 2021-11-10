@@ -1,6 +1,6 @@
 package no.nav.amt_enhetsregister.client
 
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 interface BronnoysundClient {
 
@@ -30,7 +30,7 @@ enum class EnhetOppdateringType(val type: String) {
 
 data class EnhetOppdatering(
 	val oppdateringId: Int,
-	val dato: LocalDateTime,
+	val dato: ZonedDateTime,
 	val organisasjonsnummer: String,
 	val endringstype: EnhetOppdateringType,
 )

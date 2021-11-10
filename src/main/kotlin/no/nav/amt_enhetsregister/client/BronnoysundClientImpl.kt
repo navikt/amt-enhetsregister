@@ -5,7 +5,7 @@ import no.nav.amt_enhetsregister.utils.JsonUtils.getObjectMapper
 import no.nav.amt_enhetsregister.utils.JsonUtils.listCollectionType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.zip.GZIPInputStream
 
 class BronnoysundClientImpl(
@@ -38,8 +38,8 @@ class BronnoysundClientImpl(
 				EnhetOppdatering(
 					oppdateringId = it.oppdateringsid,
 					organisasjonsnummer = it.organisasjonsnummer,
-					endringstype = EnhetOppdateringType.valueOf(it.endringstype),
-					dato = LocalDateTime.parse(it.dato)
+					endringstype = mapTilEnhetOppdateringType(it.endringstype),
+					dato = ZonedDateTime.parse(it.dato)
 				)
 			}
 		}
@@ -65,8 +65,8 @@ class BronnoysundClientImpl(
 				EnhetOppdatering(
 					oppdateringId = it.oppdateringsid,
 					organisasjonsnummer = it.organisasjonsnummer,
-					endringstype = EnhetOppdateringType.valueOf(it.endringstype),
-					dato = LocalDateTime.parse(it.dato)
+					endringstype = mapTilEnhetOppdateringType(it.endringstype),
+					dato = ZonedDateTime.parse(it.dato)
 				)
 			}
 		}
@@ -156,6 +156,16 @@ class BronnoysundClientImpl(
 			val stream = GZIPInputStream(bodyStream)
 
 			return objectMapper.readValue(stream, listCollectionType(Underenhet::class.java))
+		}
+	}
+
+	private fun mapTilEnhetOppdateringType(str: String): EnhetOppdateringType {
+		return when(str) {
+			"Ny" -> EnhetOppdateringType.NY
+			"Ukjent" -> EnhetOppdateringType.UKJENT
+			"Fjernet" -> EnhetOppdateringType.FJERNET
+			"Sletting" -> EnhetOppdateringType.SLETTING
+			else -> throw IllegalArgumentException("Ukjent EnhetOppdateringType: $str")
 		}
 	}
 
