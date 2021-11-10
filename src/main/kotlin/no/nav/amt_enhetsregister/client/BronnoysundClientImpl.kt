@@ -165,6 +165,7 @@ class BronnoysundClientImpl(
 			"Ukjent" -> EnhetOppdateringType.UKJENT
 			"Fjernet" -> EnhetOppdateringType.FJERNET
 			"Sletting" -> EnhetOppdateringType.SLETTING
+			"Endring" -> EnhetOppdateringType.ENDRING
 			else -> throw IllegalArgumentException("Ukjent EnhetOppdateringType: $str")
 		}
 	}
