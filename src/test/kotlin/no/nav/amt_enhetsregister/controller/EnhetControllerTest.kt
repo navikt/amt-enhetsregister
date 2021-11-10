@@ -45,8 +45,7 @@ class EnhetControllerTest {
 	@Test
 	fun `hentEnhet should return 401 when not authenticated`() {
 		val response = mockMvc.perform(
-			MockMvcRequestBuilders.get("/api/enhet")
-				.queryParam("organisasjonsnummer", "test")
+			MockMvcRequestBuilders.get("/api/enhet/1234")
 		).andReturn().response
 
 		assertEquals(401, response.status)
@@ -64,8 +63,7 @@ class EnhetControllerTest {
 		val token = server.issueToken("azuread", "test", "test").serialize()
 
 		val response = mockMvc.perform(
-			MockMvcRequestBuilders.get("/api/enhet")
-				.queryParam("organisasjonsnummer", "1234")
+			MockMvcRequestBuilders.get("/api/enhet/1234")
 				.header("Authorization", "Bearer $token")
 		).andReturn().response
 
@@ -81,8 +79,7 @@ class EnhetControllerTest {
 		val token = server.issueToken("azuread", "test", "test").serialize()
 
 		val response = mockMvc.perform(
-			MockMvcRequestBuilders.get("/api/enhet")
-				.queryParam("organisasjonsnummer", "test")
+			MockMvcRequestBuilders.get("/api/enhet/999222")
 				.header("Authorization", "Bearer $token")
 		).andReturn().response
 

@@ -6,8 +6,8 @@ import no.nav.amt_enhetsregister.service.EnhetService
 import no.nav.security.token.support.core.api.Protected
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
 
@@ -16,8 +16,8 @@ import org.springframework.web.server.ResponseStatusException
 class EnhetController(private val enhetService: EnhetService) {
 
 	@Protected
-	@GetMapping
-	fun hentEnhet(@RequestParam("organisasjonsnummer") organisasjonsnummer: String): EnhetDto {
+	@GetMapping("/{organisasjonsnummer}")
+	fun hentEnhet(@PathVariable("organisasjonsnummer") organisasjonsnummer: String): EnhetDto {
 		return enhetService.hentEnhet(organisasjonsnummer)?.tilDto() ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Fant ikke enhet")
 	}
 
