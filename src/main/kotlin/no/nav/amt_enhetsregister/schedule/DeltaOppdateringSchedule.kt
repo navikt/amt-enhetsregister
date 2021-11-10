@@ -13,7 +13,7 @@ class DeltaOppdateringSchedule(
 ) {
 
 	// Every hour at 0 minutes
-	@Scheduled(cron = "0 * * * *")
+	@Scheduled(cron = "0 0 * * * *")
 	fun oppdaterModerenheterSchedule() {
 		if (leaderElectionClient.isLeader) {
 			JobRunner.run("delta_oppdater_moderenheter") { deltaOppdateringEnhetService.deltaOppdaterModerenheter() }
@@ -21,7 +21,7 @@ class DeltaOppdateringSchedule(
 	}
 
 	// Every hour at 30 minutes
-	@Scheduled(cron = "30 * * * *")
+	@Scheduled(cron = "0 30 * * * *")
 	fun oppdaterUnderenhetSchedule() {
 		if (leaderElectionClient.isLeader) {
 			JobRunner.run("delta_oppdater_underenheter") { deltaOppdateringEnhetService.deltaOppdaterUnderenheter() }
