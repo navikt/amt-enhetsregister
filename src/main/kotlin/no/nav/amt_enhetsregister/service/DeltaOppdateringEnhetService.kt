@@ -57,7 +57,11 @@ class DeltaOppdateringEnhetService(
 
 		log.info("Starter delta oppdatering av $enhetType fra oppdatering_id=${progresjon.oppdateringId}")
 
-		val oppdateringer = bronnoysundClient.hentUnderenhetOppdateringer(progresjon.oppdateringId, OPPDATERINGER_SIZE)
+		val oppdateringer =
+			if (enhetType == EnhetType.MODERENHET)
+				bronnoysundClient.hentModerenhetOppdateringer(progresjon.oppdateringId, OPPDATERINGER_SIZE)
+			else
+				bronnoysundClient.hentUnderenhetOppdateringer(progresjon.oppdateringId, OPPDATERINGER_SIZE)
 
 		log.info("Antall oppdateringer: ${oppdateringer.size}. Har gjenstående oppdateringer: ${oppdateringer.size == OPPDATERINGER_SIZE}")
 
