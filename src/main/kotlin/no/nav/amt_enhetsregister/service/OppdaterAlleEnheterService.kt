@@ -42,7 +42,7 @@ class OppdaterAlleEnheterService(
 
 			enhetRepository.upsertEnheter(upserts)
 
-			log.info("Skrev chunk=$idx til databasen. Progresjon: ${idx + 1}/$totalChunks")
+			log.info("Skrev chunk=$idx til databasen. Progresjon: ${idx}/${totalChunks.toInt()}")
 		}
 
 		log.info("Alle moderenheter er skrevet til databasen. tidBrukt=${Instant.now().epochSecond - timeStarted.epochSecond}s")
@@ -71,7 +71,7 @@ class OppdaterAlleEnheterService(
 
 			enhetRepository.upsertEnheter(upserts)
 
-			log.info("Skrev chunk=$idx til databasen. Progresjon: ${idx + 1}/$totalChunks")
+			log.info("Skrev chunk=$idx til databasen. Progresjon: ${idx}/${totalChunks.toInt()}")
 		}
 
 		log.info("Alle underenheter er skrevet til databasen. tidBrukt=${Instant.now().epochSecond - timeStarted.epochSecond}s")
