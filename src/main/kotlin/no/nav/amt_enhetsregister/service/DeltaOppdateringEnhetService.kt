@@ -1,6 +1,7 @@
 package no.nav.amt_enhetsregister.service
 
 import no.nav.amt_enhetsregister.client.BronnoysundClient
+import no.nav.amt_enhetsregister.client.EnhetOppdatering
 import no.nav.amt_enhetsregister.client.EnhetOppdateringType
 import no.nav.amt_enhetsregister.repository.DeltaOppdateringProgresjonRepository
 import no.nav.amt_enhetsregister.repository.EnhetRepository
@@ -29,64 +30,56 @@ class DeltaOppdateringEnhetService(
 	private val log = LoggerFactory.getLogger(this::class.java)
 
 	fun deltaOppdaterModerenheter() {
-		val progresjon = deltaOppdateringRepository.hentOppdateringProgresjon(EnhetType.MODERENHET)
+		deltaOppdaterEnhet(enhetType = EnhetType.MODERENHET) {
+			val underenhet = bronnoysundClient.hentModerenhet(it.organisasjonsnummer)
 
-		log.info("Starter delta oppdatering av moderenheter fra oppdatering_id=${progresjon.oppdateringId}")
-
-		val oppdateringer = bronnoysundClient.hentModerenhetOppdateringer(progresjon.oppdateringId, OPPDATERINGER_SIZE)
-
-		log.info("Antall oppdateringer: ${oppdateringer.size}")
-
-		val upserts = oppdateringer
-			.filter { oppdateringTyperSomSkalSkrivesTilDb.contains(it.endringstype) }
-			. map {
-				val moderenhet = bronnoysundClient.hentModerenhet(it.organisasjonsnummer)
-
-				return@map UpsertEnhetCmd(
-					organisasjonsnummer = moderenhet.organisasjonsnummer,
-					navn = moderenhet.navn
-				)
-			}
-
-		enhetRepository.upsertEnheter(upserts)
-
-		val sisteOppdateringId = oppdateringer.maxOf { it.oppdateringId }
-
-		// Legger til +1 på oppdatering id slik at vi ikke henter den siste enheten i neste bolk
-		deltaOppdateringRepository.oppdaterProgresjon(EnhetType.MODERENHET, sisteOppdateringId + 1)
-
-		log.info("Fullførte delta oppdatering av moderenheter, sisteOppdateringId=$sisteOppdateringId")
+			UpsertEnhetCmd(
+				organisasjonsnummer = underenhet.organisasjonsnummer,
+				navn = underenhet.navn,
+			)
+		}
 	}
 
 	fun deltaOppdaterUnderenheter() {
-		val progresjon = deltaOppdateringRepository.hentOppdateringProgresjon(EnhetType.UNDERENHET)
+		deltaOppdaterEnhet(enhetType = EnhetType.UNDERENHET) {
+			val underenhet = bronnoysundClient.hentUnderenhet(it.organisasjonsnummer)
 
-		log.info("Starter delta oppdatering av underenheter fra oppdatering_id=${progresjon.oppdateringId}")
+			UpsertEnhetCmd(
+				organisasjonsnummer = underenhet.organisasjonsnummer,
+				navn = underenhet.navn,
+				overordnetEnhet = underenhet.overordnetEnhet
+			)
+		}
+	}
+
+	private fun deltaOppdaterEnhet(enhetType: EnhetType, mapper: (oppdatering: EnhetOppdatering) -> UpsertEnhetCmd) {
+		val progresjon = deltaOppdateringRepository.hentOppdateringProgresjon(enhetType)
+
+		log.info("Starter delta oppdatering av $enhetType fra oppdatering_id=${progresjon.oppdateringId}")
 
 		val oppdateringer = bronnoysundClient.hentUnderenhetOppdateringer(progresjon.oppdateringId, OPPDATERINGER_SIZE)
 
-		log.info("Antall oppdateringer: ${oppdateringer.size}")
+		log.info("Antall oppdateringer: ${oppdateringer.size}. Har gjenstående oppdateringer: ${oppdateringer.size < OPPDATERINGER_SIZE}")
+
+		if (oppdateringer.isEmpty()) {
+			log.info("Ingen oppdateringer for $enhetType")
+			return
+		}
 
 		val upserts = oppdateringer
 			.filter { oppdateringTyperSomSkalSkrivesTilDb.contains(it.endringstype) }
-			. map {
-				val underenhet = bronnoysundClient.hentUnderenhet(it.organisasjonsnummer)
-
-				return@map UpsertEnhetCmd(
-					organisasjonsnummer = underenhet.organisasjonsnummer,
-					navn = underenhet.navn,
-					overordnetEnhet = underenhet.overordnetEnhet
-				)
-			}
+			.map { mapper.invoke(it) }
 
 		enhetRepository.upsertEnheter(upserts)
 
 		val sisteOppdateringId = oppdateringer.maxOf { it.oppdateringId }
 
 		// Legger til +1 på oppdatering id slik at vi ikke henter den siste enheten i neste bolk
-		deltaOppdateringRepository.oppdaterProgresjon(EnhetType.UNDERENHET, sisteOppdateringId + 1)
+		deltaOppdateringRepository.oppdaterProgresjon(enhetType, sisteOppdateringId + 1)
 
-		log.info("Fullførte delta oppdatering av underenheter, sisteOppdateringId=$sisteOppdateringId")
+		log.info("Fullførte delta oppdatering av $enhetType, sisteOppdateringId=$sisteOppdateringId")
 	}
 
 }
+
+
