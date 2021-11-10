@@ -34,6 +34,10 @@ class BronnoysundClientImpl(
 
 			val oppdateringer = objectMapper.readValue(body, HentModerenhetOppdateringerResponse::class.java)
 
+			if (oppdateringer._embedded == null) {
+				return emptyList()
+			}
+
 			return oppdateringer._embedded.oppdaterteEnheter.map {
 				EnhetOppdatering(
 					oppdateringId = it.oppdateringsid,
@@ -60,6 +64,10 @@ class BronnoysundClientImpl(
 			val body = response.body?.string() ?: throw RuntimeException("Body is missing")
 
 			val oppdateringer = objectMapper.readValue(body, HentUnderenhetOppdateringerResponse::class.java)
+
+			if (oppdateringer._embedded == null) {
+				return emptyList()
+			}
 
 			return oppdateringer._embedded.oppdaterteUnderenheter.map {
 				EnhetOppdatering(
@@ -184,7 +192,7 @@ private data class HentUnderenhetResponse(
 )
 
 private data class HentModerenhetOppdateringerResponse(
-	val _embedded: Embedded,
+	val _embedded: Embedded?,
 ) {
 	data class Embedded(
 		val oppdaterteEnheter: List<EnhetOppdatering>
@@ -199,7 +207,7 @@ private data class HentModerenhetOppdateringerResponse(
 }
 
 private data class HentUnderenhetOppdateringerResponse(
-	val _embedded: Embedded,
+	val _embedded: Embedded?,
 ) {
 	data class Embedded(
 		val oppdaterteUnderenheter: List<EnhetOppdatering>

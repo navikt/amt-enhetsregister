@@ -59,7 +59,7 @@ class DeltaOppdateringEnhetService(
 
 		val oppdateringer = bronnoysundClient.hentUnderenhetOppdateringer(progresjon.oppdateringId, OPPDATERINGER_SIZE)
 
-		log.info("Antall oppdateringer: ${oppdateringer.size}. Har gjenstående oppdateringer: ${oppdateringer.size < OPPDATERINGER_SIZE}")
+		log.info("Antall oppdateringer: ${oppdateringer.size}. Har gjenstående oppdateringer: ${oppdateringer.size == OPPDATERINGER_SIZE}")
 
 		if (oppdateringer.isEmpty()) {
 			log.info("Ingen oppdateringer for $enhetType")
