@@ -2,8 +2,10 @@ package no.nav.amt_enhetsregister.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.amt_enhetsregister.utils.JsonUtils.getObjectMapper
+import no.nav.amt_enhetsregister.utils.JsonUtils.listCollectionType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import java.util.zip.GZIPInputStream
 
 class BronnoysundClientImpl(
 	private val bronnoysundUrl: String = BRONNOYSUND_URL,
@@ -55,9 +57,49 @@ class BronnoysundClientImpl(
 		}
 	}
 
+	override fun hentAlleModerenheter(): List<Moderenhet> {
+		val request = Request.Builder()
+			.url("$bronnoysundUrl/enhetsregisteret/api/enheter/lastned")
+			.header("Accept", "application/vnd.brreg.enhetsregisteret.enhet.v1+gzip;charset=UTF-8")
+			.get()
+			.build()
+
+		httpClient.newCall(request).execute().use { response ->
+			if (!response.isSuccessful) {
+				throw RuntimeException("Klarte ikke å laste ned moderenheter. Status: ${response.code}")
+			}
+
+			val bodyStream = response.body?.byteStream() ?: throw RuntimeException("Body is missing")
+
+			val stream = GZIPInputStream(bodyStream)
+
+			return objectMapper.readValue(stream, listCollectionType(Moderenhet::class.java))
+		}
+	}
+
+	override fun hentAlleUnderenheter(): List<Underenhet> {
+		val request = Request.Builder()
+			.url("$bronnoysundUrl/enhetsregisteret/api/underenheter/lastned")
+			.header("Accept", "application/vnd.brreg.enhetsregisteret.underenhet.v1+gzip;charset=UTF-8")
+			.get()
+			.build()
+
+		httpClient.newCall(request).execute().use { response ->
+			if (!response.isSuccessful) {
+				throw RuntimeException("Klarte ikke å laste ned underenheter. Status: ${response.code}")
+			}
+
+			val bodyStream = response.body?.byteStream() ?: throw RuntimeException("Body is missing")
+
+			val stream = GZIPInputStream(bodyStream)
+
+			return objectMapper.readValue(stream, listCollectionType(Underenhet::class.java))
+		}
+	}
+
 	private fun mapTilHentEnheterPage(dto: HentEnheterDto): HentModerenhetPage {
 		return HentModerenhetPage(
-			moderenheter = dto._embedded.enheter.map { HentModerenhetPage.Moderenhet(
+			moderenheter = dto._embedded.enheter.map { Moderenhet(
 				organisasjonsnummer = it.organisasjonsnummer,
 				navn = it.navn
 			) },
@@ -72,7 +114,7 @@ class BronnoysundClientImpl(
 
 	private fun mapTilHentUnderenheterPage(dto: HentUnderenheterDto): HentUnderenhetPage {
 		return HentUnderenhetPage(
-			underenheter = dto._embedded.underenheter.map { HentUnderenhetPage.Underenhet(
+			underenheter = dto._embedded.underenheter.map { Underenhet(
 				organisasjonsnummer = it.organisasjonsnummer,
 				navn = it.navn,
 				overordnetEnhet = it.overordnetEnhet

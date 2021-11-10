@@ -6,28 +6,32 @@ interface BronnoysundClient {
 
 	fun hentUnderenheterPage(page: Int, size: Int): HentUnderenhetPage
 
+	fun hentAlleModerenheter(): List<Moderenhet>
+
+	fun hentAlleUnderenheter(): List<Underenhet>
+
 }
 
 data class HentModerenhetPage(
 	val moderenheter: List<Moderenhet>,
 	val page: EnhetPage
-) {
-	data class Moderenhet(
-		val organisasjonsnummer: String,
-		val navn: String,
-	)
-}
+)
 
 data class HentUnderenhetPage(
 	val underenheter: List<Underenhet>,
 	val page: EnhetPage
-) {
-	data class Underenhet(
-		val organisasjonsnummer: String,
-		val navn: String,
-		val overordnetEnhet: String
-	)
-}
+)
+
+data class Moderenhet(
+	val organisasjonsnummer: String,
+	val navn: String,
+)
+
+data class Underenhet(
+	val organisasjonsnummer: String,
+	val navn: String,
+	val overordnetEnhet: String
+)
 
 data class EnhetPage(
 	val size: Int,

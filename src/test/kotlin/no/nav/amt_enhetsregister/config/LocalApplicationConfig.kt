@@ -1,9 +1,6 @@
 package no.nav.amt_enhetsregister.config
 
-import no.nav.amt_enhetsregister.client.BronnoysundClient
-import no.nav.amt_enhetsregister.client.HentModerenhetPage
-import no.nav.amt_enhetsregister.client.HentUnderenhetPage
-import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
+import no.nav.amt_enhetsregister.client.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -18,6 +15,14 @@ class LocalApplicationConfig {
 			}
 
 			override fun hentUnderenheterPage(page: Int, size: Int): HentUnderenhetPage {
+				TODO("Not yet implemented")
+			}
+
+			override fun hentAlleModerenheter(): List<Moderenhet> {
+				TODO("Not yet implemented")
+			}
+
+			override fun hentAlleUnderenheter(): List<Underenhet> {
 				TODO("Not yet implemented")
 			}
 		}
