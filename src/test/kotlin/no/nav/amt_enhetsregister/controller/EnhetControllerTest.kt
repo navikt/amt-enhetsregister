@@ -1,6 +1,5 @@
 package no.nav.amt_enhetsregister.controller
 
-import no.nav.amt_enhetsregister.repository.type.Enhet
 import no.nav.amt_enhetsregister.service.EnhetService
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
@@ -53,12 +52,14 @@ class EnhetControllerTest {
 
 	@Test
 	fun `hentEnhet should return 200 when enhet exists`() {
-		`when`(enhetService.hentEnhet(anyString())).thenReturn(Enhet(
-			id = 42,
-			organisasjonsnummer = "1234",
-			navn = "test",
-			overordnetEnhet = null
-		))
+		`when`(enhetService.hentEnhet(anyString())).thenReturn(
+			EnhetService.EnhetMedOverordnetEnhet(
+				organisasjonsnummer = "1234",
+				navn = "test",
+				overordnetEnhetOrganisasjonsnummer = null,
+				overordnetEnhetNavn = null,
+			)
+		)
 
 		val token = server.issueToken("azuread", "test", "test").serialize()
 
