@@ -31,11 +31,16 @@ class DeltaOppdateringEnhetService(
 
 	fun deltaOppdaterModerenheter() {
 		deltaOppdaterEnhet(enhetType = EnhetType.MODERENHET) {
-			val underenhet = bronnoysundClient.hentModerenhet(it.organisasjonsnummer)
+			val moderenhet = bronnoysundClient.hentModerenhet(it.organisasjonsnummer)
+
+			if (moderenhet.slettedato != null) {
+				log.info("Modereneht orgnr=${moderenhet.organisasjonsnummer} er slettet fra brreg")
+				return@deltaOppdaterEnhet null
+			}
 
 			UpsertEnhetCmd(
-				organisasjonsnummer = underenhet.organisasjonsnummer,
-				navn = underenhet.navn,
+				organisasjonsnummer = moderenhet.organisasjonsnummer,
+				navn = moderenhet.navn,
 			)
 		}
 	}
@@ -43,6 +48,16 @@ class DeltaOppdateringEnhetService(
 	fun deltaOppdaterUnderenheter() {
 		deltaOppdaterEnhet(enhetType = EnhetType.UNDERENHET) {
 			val underenhet = bronnoysundClient.hentUnderenhet(it.organisasjonsnummer)
+
+			if (underenhet.slettedato != null) {
+				log.info("Underenhet orgnr=${underenhet.organisasjonsnummer} er slettet fra brreg")
+				return@deltaOppdaterEnhet null
+			}
+
+			if (underenhet.overordnetEnhet == null) {
+				log.warn("Underenhet orgnr=${underenhet.organisasjonsnummer} mangler overordnet enhet. oppdatering_id=${it.oppdateringId}")
+				return@deltaOppdaterEnhet null
+			}
 
 			UpsertEnhetCmd(
 				organisasjonsnummer = underenhet.organisasjonsnummer,
@@ -52,7 +67,7 @@ class DeltaOppdateringEnhetService(
 		}
 	}
 
-	private fun deltaOppdaterEnhet(enhetType: EnhetType, mapper: (oppdatering: EnhetOppdatering) -> UpsertEnhetCmd) {
+	private fun deltaOppdaterEnhet(enhetType: EnhetType, mapper: (oppdatering: EnhetOppdatering) -> UpsertEnhetCmd?) {
 		val progresjon = deltaOppdateringRepository.hentOppdateringProgresjon(enhetType)
 
 		log.info("Starter delta oppdatering av $enhetType fra oppdatering_id=${progresjon.oppdateringId}")
@@ -72,7 +87,7 @@ class DeltaOppdateringEnhetService(
 
 		val upserts = oppdateringer
 			.filter { oppdateringTyperSomSkalSkrivesTilDb.contains(it.endringstype) }
-			.map { mapper.invoke(it) }
+			.mapNotNull { mapper.invoke(it) }
 
 		enhetRepository.upsertEnheter(upserts)
 

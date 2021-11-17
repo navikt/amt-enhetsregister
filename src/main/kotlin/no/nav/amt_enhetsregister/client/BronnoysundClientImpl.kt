@@ -98,7 +98,8 @@ class BronnoysundClientImpl(
 
 			return Moderenhet(
 				organisasjonsnummer = moderenhetResponse.organisasjonsnummer,
-				navn = moderenhetResponse.navn
+				navn = moderenhetResponse.navn,
+				slettedato = moderenhetResponse.slettedato
 			)
 		}
 	}
@@ -122,6 +123,7 @@ class BronnoysundClientImpl(
 			return Underenhet(
 				organisasjonsnummer = underenhetResponse.organisasjonsnummer,
 				navn = underenhetResponse.navn,
+				slettedato = underenhetResponse.slettedato,
 				overordnetEnhet = underenhetResponse.overordnetEnhet
 			)
 		}
@@ -183,12 +185,14 @@ class BronnoysundClientImpl(
 private data class HentModerenhetResponse(
 	val organisasjonsnummer: String,
 	val navn: String,
+	val slettedato: String?
 )
 
 private data class HentUnderenhetResponse(
 	val organisasjonsnummer: String,
 	val navn: String,
-	val overordnetEnhet: String
+	val slettedato: String?,
+	val overordnetEnhet: String? // Underenheter som ikke har "overordnetEnhet" er slettet
 )
 
 private data class HentModerenhetOppdateringerResponse(

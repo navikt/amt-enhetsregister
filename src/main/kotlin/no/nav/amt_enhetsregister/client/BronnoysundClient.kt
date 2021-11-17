@@ -38,11 +38,13 @@ data class EnhetOppdatering(
 data class Moderenhet(
 	val organisasjonsnummer: String,
 	val navn: String,
+	val slettedato: String?,
 )
 
 data class Underenhet(
 	val organisasjonsnummer: String,
 	val navn: String,
-	val overordnetEnhet: String
+	val slettedato: String?,
+	val overordnetEnhet: String?,
 )
 
