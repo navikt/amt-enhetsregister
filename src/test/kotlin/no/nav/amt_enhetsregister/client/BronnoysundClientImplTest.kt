@@ -3,7 +3,7 @@ package no.nav.amt_enhetsregister.client
 import no.nav.amt_enhetsregister.utils.ResourceUtils
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -30,8 +30,23 @@ class BronnoysundClientImplTest {
 
 		assertEquals("$serverUrl/enhetsregisteret/api/enheter/998877443", request.requestUrl.toString())
 
-		assertEquals("998877443", moderenhet.organisasjonsnummer)
-		assertEquals("Moderenhet 1", moderenhet.navn)
+		assertNotNull(moderenhet)
+		assertEquals("998877443", moderenhet?.organisasjonsnummer)
+		assertEquals("Moderenhet 1", moderenhet?.navn)
+	}
+
+	@Test
+	fun `hentModerenhet skal returnere null for status 410`() {
+		val server = MockWebServer()
+		val serverUrl = server.url("").toString().dropLast(1) // Removes trailing "/"
+
+		val client = BronnoysundClientImpl(
+			bronnoysundUrl = serverUrl
+		)
+
+		server.enqueue(MockResponse().setResponseCode(410))
+
+		assertNull(client.hentModerenhet("12345678"))
 	}
 
 	@Test
@@ -53,9 +68,24 @@ class BronnoysundClientImplTest {
 
 		assertEquals("$serverUrl/enhetsregisteret/api/underenheter/12345678", request.requestUrl.toString())
 
-		assertEquals("12345678", underenhet.organisasjonsnummer)
-		assertEquals("Underenhet 1", underenhet.navn)
-		assertEquals("9988564", underenhet.overordnetEnhet)
+		assertNotNull(underenhet)
+		assertEquals("12345678", underenhet?.organisasjonsnummer)
+		assertEquals("Underenhet 1", underenhet?.navn)
+		assertEquals("9988564", underenhet?.overordnetEnhet)
+	}
+
+	@Test
+	fun `hentUnderenhet skal returnere null for status 410`() {
+		val server = MockWebServer()
+		val serverUrl = server.url("").toString().dropLast(1) // Removes trailing "/"
+
+		val client = BronnoysundClientImpl(
+			bronnoysundUrl = serverUrl
+		)
+
+		server.enqueue(MockResponse().setResponseCode(410))
+
+		assertNull(client.hentUnderenhet("12345678"))
 	}
 
 	@Test

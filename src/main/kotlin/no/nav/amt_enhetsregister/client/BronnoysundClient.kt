@@ -9,9 +9,9 @@ interface BronnoysundClient {
 	fun hentUnderenhetOppdateringer(fraOppdateringId: Int, size: Int): List<EnhetOppdatering>
 
 
-	fun hentModerenhet(organisasjonsnummer: String): Moderenhet
+	fun hentModerenhet(organisasjonsnummer: String): Moderenhet?
 
-	fun hentUnderenhet(organisasjonsnummer: String): Underenhet
+	fun hentUnderenhet(organisasjonsnummer: String): Underenhet?
 
 
 	fun hentAlleModerenheter(): List<Moderenhet>

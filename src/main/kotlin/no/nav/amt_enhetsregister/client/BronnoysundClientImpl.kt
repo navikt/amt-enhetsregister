@@ -5,6 +5,7 @@ import no.nav.amt_enhetsregister.utils.JsonUtils.getObjectMapper
 import no.nav.amt_enhetsregister.utils.JsonUtils.listCollectionType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.springframework.http.HttpStatus
 import java.time.ZonedDateTime
 import java.util.zip.GZIPInputStream
 
@@ -80,7 +81,7 @@ class BronnoysundClientImpl(
 		}
 	}
 
-	override fun hentModerenhet(organisasjonsnummer: String): Moderenhet {
+	override fun hentModerenhet(organisasjonsnummer: String): Moderenhet? {
 		val request = Request.Builder()
 			.url("$bronnoysundUrl/enhetsregisteret/api/enheter/$organisasjonsnummer")
 			.header("Accept", "application/json")
@@ -88,6 +89,10 @@ class BronnoysundClientImpl(
 			.build()
 
 		httpClient.newCall(request).execute().use { response ->
+			if (response.code == HttpStatus.GONE.value()) {
+				return null
+			}
+
 			if (!response.isSuccessful) {
 				throw RuntimeException("Klarte ikke å hente moderenhet. Status: ${response.code}")
 			}
@@ -104,7 +109,7 @@ class BronnoysundClientImpl(
 		}
 	}
 
-	override fun hentUnderenhet(organisasjonsnummer: String): Underenhet {
+	override fun hentUnderenhet(organisasjonsnummer: String): Underenhet? {
 		val request = Request.Builder()
 			.url("$bronnoysundUrl/enhetsregisteret/api/underenheter/$organisasjonsnummer")
 			.header("Accept", "application/json")
@@ -112,6 +117,10 @@ class BronnoysundClientImpl(
 			.build()
 
 		httpClient.newCall(request).execute().use { response ->
+			if (response.code == HttpStatus.GONE.value()) {
+				return null
+			}
+
 			if (!response.isSuccessful) {
 				throw RuntimeException("Klarte ikke å hente underenhet. Status: ${response.code}")
 			}

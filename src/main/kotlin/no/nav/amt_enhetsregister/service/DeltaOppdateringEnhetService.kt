@@ -33,8 +33,8 @@ class DeltaOppdateringEnhetService(
 		deltaOppdaterEnhet(enhetType = EnhetType.MODERENHET) {
 			val moderenhet = bronnoysundClient.hentModerenhet(it.organisasjonsnummer)
 
-			if (moderenhet.slettedato != null) {
-				log.info("Modereneht orgnr=${moderenhet.organisasjonsnummer} er slettet fra brreg")
+			if (moderenhet == null || moderenhet.slettedato != null) {
+				log.info("Modereneht orgnr=${it.organisasjonsnummer} er slettet fra brreg")
 				return@deltaOppdaterEnhet null
 			}
 
@@ -49,8 +49,8 @@ class DeltaOppdateringEnhetService(
 		deltaOppdaterEnhet(enhetType = EnhetType.UNDERENHET) {
 			val underenhet = bronnoysundClient.hentUnderenhet(it.organisasjonsnummer)
 
-			if (underenhet.slettedato != null) {
-				log.info("Underenhet orgnr=${underenhet.organisasjonsnummer} er slettet fra brreg")
+			if (underenhet == null || underenhet.slettedato != null) {
+				log.info("Underenhet orgnr=${it.organisasjonsnummer} er slettet fra brreg")
 				return@deltaOppdaterEnhet null
 			}
 
