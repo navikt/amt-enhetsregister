@@ -18,9 +18,9 @@
     <description>ACL mot Brønnøysundregisteret</description>
 
     <properties>
-        <java.version>11</java.version>
-        <kotlin.version>1.4.21</kotlin.version>
-        <testcontainers.version>1.16.2</testcontainers.version>
+        <java.version>17</java.version>
+        <kotlin.version>1.6.10</kotlin.version>
+        <testcontainers.version>1.16.3</testcontainers.version>
         <shedlock.version>4.29.0</shedlock.version>
         <common.version>2.2021.09.17_07.09-67428a6422cc</common.version>
         <okhttp.version>4.9.2</okhttp.version>
@@ -126,19 +126,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${testcontainers.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

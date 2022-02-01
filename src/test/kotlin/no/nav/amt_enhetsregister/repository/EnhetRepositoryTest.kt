@@ -1,23 +1,16 @@
 package no.nav.amt_enhetsregister.repository
 
 import no.nav.amt_enhetsregister.repository.type.UpsertEnhetCmd
-import no.nav.amt_enhetsregister.utils.LocalPostgresDatabase.cleanAndMigrate
-import no.nav.amt_enhetsregister.utils.LocalPostgresDatabase.createDataSource
-import no.nav.amt_enhetsregister.utils.ResourceUtils
+import no.nav.amt_enhetsregister.utils.DatabaseTestUtils
+import no.nav.amt_enhetsregister.utils.SingletonPostgresContainer
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcTemplate
-import org.testcontainers.containers.PostgreSQLContainer
-import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
-import org.testcontainers.utility.DockerImageName
 
-@Testcontainers
 class EnhetRepositoryTest {
 
-	@Container
-	val postgresContainer: PostgreSQLContainer<Nothing> = PostgreSQLContainer(DockerImageName.parse("postgres:12-alpine"))
+	private val dataSource = SingletonPostgresContainer.getDataSource()
 
 	lateinit var jdbcTemplate: JdbcTemplate
 
@@ -25,14 +18,9 @@ class EnhetRepositoryTest {
 
 	@BeforeEach
 	fun migrate() {
-		val dataSource = createDataSource(postgresContainer)
-
-		cleanAndMigrate(dataSource)
-
 		jdbcTemplate = JdbcTemplate(dataSource)
 		enhetRepository = EnhetRepository(jdbcTemplate)
-
-		jdbcTemplate.update(ResourceUtils.getResourceAsText("/db/enhet-data.sql"))
+		DatabaseTestUtils.cleanAndInitDatabase(dataSource,"/db/enhet-data.sql")
 	}
 
 	@Test
