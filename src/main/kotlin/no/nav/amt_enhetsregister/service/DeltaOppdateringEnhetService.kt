@@ -19,6 +19,7 @@ class DeltaOppdateringEnhetService(
 
 	companion object {
 		const val OPPDATERINGER_SIZE = 500
+		const val UKJENT_VIRKSOMHET_NR = "999999999"
 	}
 
 	private val oppdateringTyperSomSkalSkrivesTilDb = listOf(
@@ -35,7 +36,11 @@ class DeltaOppdateringEnhetService(
 
 			if (moderenhet == null || moderenhet.slettedato != null) {
 				log.info("Modereneht orgnr=${it.organisasjonsnummer} er slettet fra brreg")
-				return@deltaOppdaterEnhet null
+
+				return@deltaOppdaterEnhet UpsertEnhetCmd(
+					organisasjonsnummer = it.organisasjonsnummer,
+					navn = "Slettet virksomhet",
+				)
 			}
 
 			UpsertEnhetCmd(
@@ -51,12 +56,22 @@ class DeltaOppdateringEnhetService(
 
 			if (underenhet == null || underenhet.slettedato != null) {
 				log.info("Underenhet orgnr=${it.organisasjonsnummer} er slettet fra brreg")
-				return@deltaOppdaterEnhet null
+
+				return@deltaOppdaterEnhet UpsertEnhetCmd(
+					organisasjonsnummer = it.organisasjonsnummer,
+					navn = "Slettet virksomhet",
+					overordnetEnhet = UKJENT_VIRKSOMHET_NR
+				)
 			}
 
 			if (underenhet.overordnetEnhet == null) {
 				log.warn("Underenhet orgnr=${underenhet.organisasjonsnummer} mangler overordnet enhet. oppdatering_id=${it.oppdateringId}")
-				return@deltaOppdaterEnhet null
+
+				return@deltaOppdaterEnhet UpsertEnhetCmd(
+					organisasjonsnummer = it.organisasjonsnummer,
+					navn = underenhet.navn,
+					overordnetEnhet = UKJENT_VIRKSOMHET_NR
+				)
 			}
 
 			UpsertEnhetCmd(
