@@ -21,7 +21,7 @@
         <java.version>17</java.version>
         <kotlin.version>1.6.10</kotlin.version>
         <testcontainers.version>1.16.3</testcontainers.version>
-        <shedlock.version>4.29.0</shedlock.version>
+        <shedlock.version>4.30.0</shedlock.version>
         <common.version>2.2021.09.17_07.09-67428a6422cc</common.version>
         <okhttp.version>4.9.2</okhttp.version>
     </properties>
