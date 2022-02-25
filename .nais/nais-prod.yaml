@@ -42,10 +42,11 @@ spec:
         - host: data.brreg.no
   gcp:
     sqlInstances:
-      - type: POSTGRES_12
+      - name: amt-enhetsregister-v1
+        type: POSTGRES_14
         tier: db-custom-1-3840
         diskAutoresize: true
         databases:
-          - name: amt-enhetsregister-db
+          - name: amt-enhetsregister
             envVarPrefix: DB
 
