@@ -37,7 +37,7 @@ spec:
         - application: amt-tiltak
           namespace: amt
           cluster: prod-gcp
-        - application: arena-aktivitet-acl
+        - application: aktivitet-arena-acl
           namespace: dab
           cluster: prod-gcp
     outbound:
