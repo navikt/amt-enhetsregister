@@ -40,6 +40,9 @@ spec:
         - application: aktivitet-arena-acl
           namespace: dab
           cluster: prod-gcp
+        - application: mulighetsrommet-api
+          namespace: team-mulighetsrommet
+          cluster: prod-gcp
     outbound:
       external:
         - host: data.brreg.no
