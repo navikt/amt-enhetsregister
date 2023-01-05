@@ -8,6 +8,8 @@ metadata:
 spec:
   image: ghcr.io/navikt/amt-enhetsregister/amt-enhetsregister:{{version}}
   port: 8080
+  ingresses:
+    - https://amt-enhetsregister.intern.nav.no
   prometheus:
     enabled: true
     path: /internal/prometheus
