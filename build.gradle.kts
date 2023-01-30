@@ -1,10 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.7.8"
-    id("io.spring.dependency-management") version "1.0.15.RELEASE"
-    kotlin("jvm") version "1.6.21"
-    kotlin("plugin.spring") version "1.6.21"
+    id("org.springframework.boot") version "3.0.2"
+    id("io.spring.dependency-management") version "1.1.0"
+    kotlin("jvm") version "1.7.22"
+    kotlin("plugin.spring") version "1.7.22"
 }
 
 group = "no.nav.amt_enhetsregister"
@@ -14,9 +14,10 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
+    maven { setUrl("https://jitpack.io") }
 }
 
-val commonVersion = "2.2022.05.13_07.24-6eadb37dec31"
+val commonVersion = "2023.01.30_16.31-5977997e3a67"
 val testcontainersVersion = "1.17.6"
 
 dependencies {
@@ -31,14 +32,17 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    
+
+    implementation("com.github.navikt.common-java-modules:job:$commonVersion")
+    implementation("com.github.navikt.common-java-modules:log:$commonVersion")
+    implementation("com.github.navikt.common-java-modules:rest:$commonVersion")
+
     implementation("org.flywaydb:flyway-core")
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.31.0")
     implementation("net.javacrumbs.shedlock:shedlock-core:4.31.0")
-    implementation("no.nav.common:job:$commonVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:6.6")
-    implementation("no.nav.security:token-validation-spring:2.0.20")
+    implementation("no.nav.security:token-validation-spring:3.0.2")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     runtimeOnly("org.postgresql:postgresql")
     

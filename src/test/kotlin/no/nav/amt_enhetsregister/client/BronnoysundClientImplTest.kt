@@ -1,6 +1,6 @@
 package no.nav.amt_enhetsregister.client
 
-import no.nav.amt_enhetsregister.utils.ResourceUtils
+import no.nav.amt_enhetsregister.test_utils.ResourceUtils
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.Assertions.*

@@ -1,4 +1,4 @@
-package no.nav.amt_enhetsregister.utils
+package no.nav.amt_enhetsregister.test_utils
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -49,6 +49,7 @@ object SingletonPostgresContainer {
 		val flyway: Flyway = Flyway.configure()
 			.dataSource(dataSource)
 			.connectRetries(10)
+			.cleanDisabled(false)
 			.load()
 
 		flyway.clean()

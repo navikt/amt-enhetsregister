@@ -1,8 +1,8 @@
 package no.nav.amt_enhetsregister.repository
 
 import no.nav.amt_enhetsregister.repository.type.UpsertEnhetCmd
-import no.nav.amt_enhetsregister.utils.DatabaseTestUtils
-import no.nav.amt_enhetsregister.utils.SingletonPostgresContainer
+import no.nav.amt_enhetsregister.test_utils.DatabaseTestUtils
+import no.nav.amt_enhetsregister.test_utils.SingletonPostgresContainer
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

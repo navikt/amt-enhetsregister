@@ -1,4 +1,4 @@
-package no.nav.amt_enhetsregister.utils
+package no.nav.amt_enhetsregister.test_utils
 
 import org.springframework.jdbc.core.JdbcTemplate
 import javax.sql.DataSource
