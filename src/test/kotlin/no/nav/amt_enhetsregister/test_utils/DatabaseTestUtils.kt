@@ -21,7 +21,7 @@ object DatabaseTestUtils {
 
 	fun cleanDatabase(dataSource: DataSource) {
 		val jdbcTemplate = JdbcTemplate(dataSource)
-		val tables = getAllTables(jdbcTemplate, SCHEMA)//.filter { it != FLYWAY_SCHEMA_HISTORY_TABLE_NAME }
+		val tables = getAllTables(jdbcTemplate, SCHEMA).filter { it != FLYWAY_SCHEMA_HISTORY_TABLE_NAME }
 
 		val sequences = getAllSequences(jdbcTemplate, SCHEMA)
 

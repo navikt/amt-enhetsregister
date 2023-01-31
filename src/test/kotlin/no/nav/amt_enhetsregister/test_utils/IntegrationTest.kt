@@ -32,14 +32,8 @@ class IntegrationTest {
 		.callTimeout(Duration.ofMinutes(5))
 		.build()
 
-	@AfterEach
-	fun cleanDatabase() {
-		DatabaseTestUtils.cleanDatabase(postgresDataSource)
-	}
-
 	companion object {
 		val oAuthServer = MockOAuthServer()
-		val postgresDataSource = SingletonPostgresContainer.getDataSource()
 
 		@JvmStatic
 		@DynamicPropertySource
@@ -48,8 +42,6 @@ class IntegrationTest {
 
 			registry.add("no.nav.security.jwt.issuer.azuread.discovery-url", oAuthServer::getDiscoveryUrl)
 			registry.add("no.nav.security.jwt.issuer.azuread.accepted-audience") { "test-aud" }
-
-
 
 			val container = SingletonPostgresContainer.getContainer()
 
