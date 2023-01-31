@@ -24,4 +24,8 @@ object JsonUtils {
 		)
 	}
 
+	fun toJsonString(any: Any): String {
+		return objectMapper.writeValueAsString(any)
+	}
+
 }

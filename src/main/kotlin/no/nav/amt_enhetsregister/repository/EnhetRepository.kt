@@ -5,63 +5,48 @@ import no.nav.amt_enhetsregister.repository.type.UpsertEnhetCmd
 import org.springframework.jdbc.core.BatchPreparedStatementSetter
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import java.sql.PreparedStatement
 
 @Repository
-class EnhetRepository(private val jdbcTemplate: JdbcTemplate) {
-
-	companion object Table {
-		const val TABLE_NAME = "enhet"
-
-		const val ID = "id"
-		const val ORGANISASJONSNUMMER = "organisasjonsnummer"
-		const val OVERORDNET_ENHET = "overordnet_enhet"
-		const val NAVN = "navn"
-		const val UPDATED_AT = "updated_at"
-	}
+class EnhetRepository(
+	private val namedJdbcTemplate: NamedParameterJdbcTemplate,
+) {
 
 	val rowMapper =
 		RowMapper { rs, _ ->
 			Enhet(
-				id = rs.getInt(ID),
-				organisasjonsnummer = rs.getString(ORGANISASJONSNUMMER),
-				navn = rs.getString(NAVN),
-				overordnetEnhet = rs.getString(OVERORDNET_ENHET)
+				id = rs.getInt("id"),
+				organisasjonsnummer = rs.getString("organisasjonsnummer"),
+				navn = rs.getString("navn"),
+				overordnetEnhet = rs.getString("overordnet_enhet")
 			)
 		}
 
-	fun upsertEnheter(enheter: List<UpsertEnhetCmd>) {
-		val sql = """
-			INSERT INTO $TABLE_NAME ($ORGANISASJONSNUMMER, $NAVN, $OVERORDNET_ENHET) VALUES (?, ?, ?)
-			ON CONFLICT ($ORGANISASJONSNUMMER)
-			DO UPDATE SET $NAVN = EXCLUDED.$NAVN, $OVERORDNET_ENHET = EXCLUDED.$OVERORDNET_ENHET, $UPDATED_AT = CURRENT_TIMESTAMP
-		""".trimIndent()
-
-		jdbcTemplate.batchUpdate(
-			sql,
-			object : BatchPreparedStatementSetter {
-				override fun setValues(ps: PreparedStatement, i: Int) {
-					val enhet = enheter.get(i)
-
-					ps.setString(1, enhet.organisasjonsnummer)
-					ps.setString(2, enhet.navn)
-					ps.setString(3, enhet.overordnetEnhet)
-				}
-
-				override fun getBatchSize(): Int {
-					return enheter.size
-				}
-			}
-		)
-	}
-
 	fun hentEnhet(organisasjonsnummer: String): Enhet? {
 		val sql = """
-			SELECT * FROM $TABLE_NAME WHERE $ORGANISASJONSNUMMER = ? LIMIT 1
+			SELECT * FROM enhet WHERE organisasjonsnummer = :organisasjonsnummer LIMIT 1
 		""".trimIndent()
 
-		return jdbcTemplate.query(sql, rowMapper, organisasjonsnummer).firstOrNull()
+		val parameters = MapSqlParameterSource().addValue("organisasjonsnummer", organisasjonsnummer)
+		return namedJdbcTemplate.query(sql, parameters, rowMapper).firstOrNull()
+	}
+
+	fun upsertEnhet(upsertEnhetCmd: UpsertEnhetCmd) {
+		val sql = """
+			INSERT INTO enhet (organisasjonsnummer, navn, overordnet_enhet) VALUES (:organisasjonsnummer, :navn, :overordnetEnhet)
+			ON CONFLICT (organisasjonsnummer)
+			DO UPDATE SET navn = EXCLUDED.navn, overordnet_enhet = EXCLUDED.overordnet_enhet, updated_at = CURRENT_TIMESTAMP
+		""".trimIndent()
+
+		val parameters = MapSqlParameterSource()
+			.addValue("organisasjonsnummer", upsertEnhetCmd.organisasjonsnummer)
+			.addValue("navn", upsertEnhetCmd.navn)
+			.addValue("overordnetEnhet", upsertEnhetCmd.overordnetEnhet)
+
+		namedJdbcTemplate.update(sql, parameters)
 	}
 
 }

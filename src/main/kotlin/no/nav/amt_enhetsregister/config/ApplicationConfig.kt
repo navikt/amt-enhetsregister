@@ -7,6 +7,7 @@ import no.nav.common.job.leader_election.LeaderElectionClient
 import no.nav.common.job.leader_election.ShedLockLeaderElectionClient
 import no.nav.common.rest.filter.LogRequestFilter
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

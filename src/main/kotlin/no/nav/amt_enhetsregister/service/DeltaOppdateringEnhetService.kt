@@ -4,15 +4,13 @@ import no.nav.amt_enhetsregister.client.BronnoysundClient
 import no.nav.amt_enhetsregister.client.EnhetOppdatering
 import no.nav.amt_enhetsregister.client.EnhetOppdateringType
 import no.nav.amt_enhetsregister.repository.DeltaOppdateringProgresjonRepository
-import no.nav.amt_enhetsregister.repository.EnhetRepository
 import no.nav.amt_enhetsregister.repository.type.EnhetType
-import no.nav.amt_enhetsregister.repository.type.UpsertEnhetCmd
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class DeltaOppdateringEnhetService(
-	private val enhetRepository: EnhetRepository,
+	private val enhetService: EnhetService,
 	private val deltaOppdateringRepository: DeltaOppdateringProgresjonRepository,
 	private val bronnoysundClient: BronnoysundClient
 ) {
@@ -37,15 +35,17 @@ class DeltaOppdateringEnhetService(
 			if (moderenhet == null || moderenhet.slettedato != null) {
 				log.info("Modereneht orgnr=${it.organisasjonsnummer} er slettet fra brreg")
 
-				return@deltaOppdaterEnhet UpsertEnhetCmd(
+				return@deltaOppdaterEnhet EnhetService.UpsertEnhet(
 					organisasjonsnummer = it.organisasjonsnummer,
 					navn = "Slettet virksomhet",
+					overordnetEnhetOrgNr = null,
 				)
 			}
 
-			UpsertEnhetCmd(
+			EnhetService.UpsertEnhet(
 				organisasjonsnummer = moderenhet.organisasjonsnummer,
 				navn = moderenhet.navn,
+				overordnetEnhetOrgNr = null,
 			)
 		}
 	}
@@ -57,32 +57,32 @@ class DeltaOppdateringEnhetService(
 			if (underenhet == null || underenhet.slettedato != null) {
 				log.info("Underenhet orgnr=${it.organisasjonsnummer} er slettet fra brreg")
 
-				return@deltaOppdaterEnhet UpsertEnhetCmd(
+				return@deltaOppdaterEnhet EnhetService.UpsertEnhet(
 					organisasjonsnummer = it.organisasjonsnummer,
 					navn = "Slettet virksomhet",
-					overordnetEnhet = UKJENT_VIRKSOMHET_NR
+					overordnetEnhetOrgNr = UKJENT_VIRKSOMHET_NR
 				)
 			}
 
 			if (underenhet.overordnetEnhet == null) {
 				log.warn("Underenhet orgnr=${underenhet.organisasjonsnummer} mangler overordnet enhet. oppdatering_id=${it.oppdateringId}")
 
-				return@deltaOppdaterEnhet UpsertEnhetCmd(
+				return@deltaOppdaterEnhet EnhetService.UpsertEnhet(
 					organisasjonsnummer = it.organisasjonsnummer,
 					navn = underenhet.navn,
-					overordnetEnhet = UKJENT_VIRKSOMHET_NR
+					overordnetEnhetOrgNr = UKJENT_VIRKSOMHET_NR
 				)
 			}
 
-			UpsertEnhetCmd(
+			EnhetService.UpsertEnhet(
 				organisasjonsnummer = underenhet.organisasjonsnummer,
 				navn = underenhet.navn,
-				overordnetEnhet = underenhet.overordnetEnhet
+				overordnetEnhetOrgNr = underenhet.overordnetEnhet
 			)
 		}
 	}
 
-	private fun deltaOppdaterEnhet(enhetType: EnhetType, mapper: (oppdatering: EnhetOppdatering) -> UpsertEnhetCmd?) {
+	private fun deltaOppdaterEnhet(enhetType: EnhetType, mapper: (oppdatering: EnhetOppdatering) -> EnhetService.UpsertEnhet?) {
 		val progresjon = deltaOppdateringRepository.hentOppdateringProgresjon(enhetType)
 
 		log.info("Starter delta oppdatering av $enhetType fra oppdatering_id=${progresjon.oppdateringId}")
@@ -104,7 +104,7 @@ class DeltaOppdateringEnhetService(
 			.filter { oppdateringTyperSomSkalSkrivesTilDb.contains(it.endringstype) }
 			.mapNotNull { mapper.invoke(it) }
 
-		enhetRepository.upsertEnheter(upserts)
+		enhetService.oppdaterEnheter(upserts)
 
 		val sisteOppdateringId = oppdateringer.maxOf { it.oppdateringId }
 
