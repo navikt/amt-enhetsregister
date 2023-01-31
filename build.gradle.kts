@@ -14,6 +14,7 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
+    maven { setUrl("https://packages.confluent.io/maven/") }
     maven { setUrl("https://jitpack.io") }
 }
 
@@ -36,6 +37,7 @@ dependencies {
     implementation("com.github.navikt.common-java-modules:job:$commonVersion")
     implementation("com.github.navikt.common-java-modules:log:$commonVersion")
     implementation("com.github.navikt.common-java-modules:rest:$commonVersion")
+    implementation("com.github.navikt.common-java-modules:kafka:$commonVersion")
 
     implementation("org.flywaydb:flyway-core")
     implementation("io.micrometer:micrometer-registry-prometheus")
@@ -47,6 +49,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
     
     testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
+    testImplementation("org.testcontainers:kafka:$testcontainersVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("no.nav.security:mock-oauth2-server:0.3.5")

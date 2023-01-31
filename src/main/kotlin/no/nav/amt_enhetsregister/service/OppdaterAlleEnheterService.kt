@@ -1,8 +1,6 @@
 package no.nav.amt_enhetsregister.service
 
 import no.nav.amt_enhetsregister.client.BronnoysundClient
-import no.nav.amt_enhetsregister.repository.EnhetRepository
-import no.nav.amt_enhetsregister.repository.type.UpsertEnhetCmd
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -11,7 +9,7 @@ import kotlin.math.ceil
 @Service
 class OppdaterAlleEnheterService(
 	private val bronnoysundClient: BronnoysundClient,
-	private val enhetRepository: EnhetRepository,
+	private val enhetService: EnhetService,
 ) {
 
 	companion object {
@@ -34,13 +32,14 @@ class OppdaterAlleEnheterService(
 
 		alleModerenheter.chunked(CHUNCK_SIZE).forEachIndexed { idx, chunk ->
 			val upserts = chunk.map {
-				UpsertEnhetCmd(
+				EnhetService.UpsertEnhet(
 					organisasjonsnummer = it.organisasjonsnummer,
 					navn = it.navn,
+					overordnetEnhetOrgNr = null,
 				)
 			}
 
-			enhetRepository.upsertEnheter(upserts)
+			enhetService.oppdaterEnheter(upserts)
 
 			log.info("Skrev chunk=$idx til databasen. Progresjon: ${idx}/${totalChunks.toInt()}")
 		}
@@ -62,14 +61,14 @@ class OppdaterAlleEnheterService(
 
 		alleUnderenheter.chunked(CHUNCK_SIZE).forEachIndexed { idx, chunk ->
 			val upserts = chunk.map {
-				UpsertEnhetCmd(
+				EnhetService.UpsertEnhet(
 					organisasjonsnummer = it.organisasjonsnummer,
 					navn = it.navn,
-					overordnetEnhet = it.overordnetEnhet
+					overordnetEnhetOrgNr = it.overordnetEnhet
 				)
 			}
 
-			enhetRepository.upsertEnheter(upserts)
+			enhetService.oppdaterEnheter(upserts)
 
 			log.info("Skrev chunk=$idx til databasen. Progresjon: ${idx}/${totalChunks.toInt()}")
 		}
