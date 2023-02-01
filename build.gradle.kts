@@ -43,7 +43,7 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.31.0")
     implementation("net.javacrumbs.shedlock:shedlock-core:4.31.0")
-    implementation("net.logstash.logback:logstash-logback-encoder:6.6")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.2")
     implementation("no.nav.security:token-validation-spring:3.0.2")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     runtimeOnly("org.postgresql:postgresql")
