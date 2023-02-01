@@ -48,6 +48,8 @@ spec:
     outbound:
       external:
         - host: data.brreg.no
+  kafka:
+    pool: nav-prod
   env:
     # Kafka topics
     - name: VIRKSOMHETER_TOPIC
