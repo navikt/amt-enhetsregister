@@ -18,7 +18,7 @@ repositories {
     maven { setUrl("https://jitpack.io") }
 }
 
-val commonVersion = "2023.01.30_16.31-5977997e3a67"
+val commonVersion = "2023.02.08_14.02-e5f1a7a4b9e4"
 val testcontainersVersion = "1.17.6"
 
 dependencies {
@@ -34,10 +34,15 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    implementation("com.github.navikt.common-java-modules:job:$commonVersion")
-    implementation("com.github.navikt.common-java-modules:log:$commonVersion")
-    implementation("com.github.navikt.common-java-modules:rest:$commonVersion")
-    implementation("com.github.navikt.common-java-modules:kafka:$commonVersion")
+    implementation("com.github.navikt.common-java-modules:job:$commonVersion") {
+        exclude("com.github.navikt.common-java-modules", "log")
+    }
+    implementation("com.github.navikt.common-java-modules:rest:$commonVersion") {
+        exclude("com.github.navikt.common-java-modules", "log")
+    }
+    implementation("com.github.navikt.common-java-modules:kafka:$commonVersion") {
+        exclude("com.github.navikt.common-java-modules", "log")
+    }
 
     implementation("org.flywaydb:flyway-core")
     implementation("io.micrometer:micrometer-registry-prometheus")
@@ -54,7 +59,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("no.nav.security:mock-oauth2-server:0.3.5")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.9.3")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude("com.vaadin.external.google", "android-json")
+    }
 }
 
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
