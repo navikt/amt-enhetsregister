@@ -94,7 +94,7 @@ class BronnoysundClientImpl(
 			}
 
 			if (!response.isSuccessful) {
-				throw RuntimeException("Klarte ikke å hente moderenhet. Status: ${response.code}")
+				throw RuntimeException("Klarte ikke å hente moderenhet for orgnummer $organisasjonsnummer. Status: ${response.code}")
 			}
 
 			val body = response.body?.string() ?: throw RuntimeException("Body is missing")
@@ -122,7 +122,7 @@ class BronnoysundClientImpl(
 			}
 
 			if (!response.isSuccessful) {
-				throw RuntimeException("Klarte ikke å hente underenhet. Status: ${response.code}")
+				throw RuntimeException("Klarte ikke å hente underenhet for orgnummer $organisasjonsnummer. Status: ${response.code}")
 			}
 
 			val body = response.body?.string() ?: throw RuntimeException("Body is missing")
