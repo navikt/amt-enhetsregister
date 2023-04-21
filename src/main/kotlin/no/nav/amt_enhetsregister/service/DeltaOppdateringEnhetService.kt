@@ -30,23 +30,28 @@ class DeltaOppdateringEnhetService(
 
 	fun deltaOppdaterModerenheter() {
 		deltaOppdaterEnhet(enhetType = EnhetType.MODERENHET) {
-			val moderenhet = bronnoysundClient.hentModerenhet(it.organisasjonsnummer)
+			if (it.organisasjonsnummer != "931221671") {
+				val moderenhet = bronnoysundClient.hentModerenhet(it.organisasjonsnummer)
 
-			if (moderenhet == null || moderenhet.slettedato != null) {
-				log.info("Modereneht orgnr=${it.organisasjonsnummer} er slettet fra brreg")
+				if (moderenhet == null || moderenhet.slettedato != null) {
+					log.info("Moderenhet orgnr=${it.organisasjonsnummer} er slettet fra brreg")
 
-				return@deltaOppdaterEnhet EnhetService.UpsertEnhet(
-					organisasjonsnummer = it.organisasjonsnummer,
-					navn = "Slettet virksomhet",
+					return@deltaOppdaterEnhet EnhetService.UpsertEnhet(
+						organisasjonsnummer = it.organisasjonsnummer,
+						navn = "Slettet virksomhet",
+						overordnetEnhetOrgNr = null,
+					)
+				}
+
+				EnhetService.UpsertEnhet(
+					organisasjonsnummer = moderenhet.organisasjonsnummer,
+					navn = moderenhet.navn,
 					overordnetEnhetOrgNr = null,
 				)
+			} else {
+				log.warn("Ignorerer oppdatering på enhet...")
+				return@deltaOppdaterEnhet null
 			}
-
-			EnhetService.UpsertEnhet(
-				organisasjonsnummer = moderenhet.organisasjonsnummer,
-				navn = moderenhet.navn,
-				overordnetEnhetOrgNr = null,
-			)
 		}
 	}
 
