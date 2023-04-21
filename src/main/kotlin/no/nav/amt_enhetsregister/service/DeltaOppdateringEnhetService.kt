@@ -30,7 +30,7 @@ class DeltaOppdateringEnhetService(
 
 	fun deltaOppdaterModerenheter() {
 		deltaOppdaterEnhet(enhetType = EnhetType.MODERENHET) {
-			if (it.organisasjonsnummer != "931221671") {
+			if (it.organisasjonsnummer != "931221671" && it.organisasjonsnummer != "931164147") {
 				val moderenhet = bronnoysundClient.hentModerenhet(it.organisasjonsnummer)
 
 				if (moderenhet == null || moderenhet.slettedato != null) {
@@ -49,7 +49,7 @@ class DeltaOppdateringEnhetService(
 					overordnetEnhetOrgNr = null,
 				)
 			} else {
-				log.warn("Ignorerer oppdatering på enhet...")
+				log.warn("Ignorerer oppdatering på enhet ${it.organisasjonsnummer}")
 				return@deltaOppdaterEnhet null
 			}
 		}
