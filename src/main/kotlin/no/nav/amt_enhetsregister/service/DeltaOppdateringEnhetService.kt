@@ -33,7 +33,7 @@ class DeltaOppdateringEnhetService(
 			val moderenhet = bronnoysundClient.hentModerenhet(it.organisasjonsnummer)
 
 			if (moderenhet == null || moderenhet.slettedato != null) {
-				log.info("Modereneht orgnr=${it.organisasjonsnummer} er slettet fra brreg")
+				log.info("Moderenhet orgnr=${it.organisasjonsnummer} er slettet fra brreg")
 
 				return@deltaOppdaterEnhet EnhetService.UpsertEnhet(
 					organisasjonsnummer = it.organisasjonsnummer,
