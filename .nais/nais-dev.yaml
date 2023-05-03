@@ -39,6 +39,9 @@ spec:
         - application: amt-tiltak
           namespace: amt
           cluster: dev-gcp
+        - application: amt-arrangor
+          namespace: amt
+          cluster: dev-gcp
         - application: aktivitet-arena-acl
           namespace: dab
           cluster: dev-gcp
