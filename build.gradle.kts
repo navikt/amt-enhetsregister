@@ -18,11 +18,11 @@ repositories {
     maven { setUrl("https://jitpack.io") }
 }
 
-val commonVersion = "3.2023.04.03_13.09-15bb53f1d80e"
-val testcontainersVersion = "1.18.0"
+val commonVersion = "3.2023.05.08_11.05-d13adbef1e85"
+val testcontainersVersion = "1.18.1"
 val logstashEncoderVersion = "7.3"
 val shedlockVersion = "5.2.0"
-val tokenSupportVersion = "3.0.11"
+val tokenSupportVersion = "3.0.12"
 val okHttpVersion = "4.11.0"
 val mockOauth2ServerVersion = "0.5.8"
 
