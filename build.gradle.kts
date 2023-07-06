@@ -24,7 +24,7 @@ val logstashEncoderVersion = "7.4"
 val shedlockVersion = "5.5.0"
 val tokenSupportVersion = "3.1.0"
 val okHttpVersion = "4.11.0"
-val mockOauth2ServerVersion = "0.5.9"
+val mockOauth2ServerVersion = "0.5.10"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
