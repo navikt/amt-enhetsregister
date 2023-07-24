@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.1.1"
-    id("io.spring.dependency-management") version "1.1.0"
+    id("org.springframework.boot") version "3.1.2"
+    id("io.spring.dependency-management") version "1.1.2"
     kotlin("jvm") version "1.9.0"
     kotlin("plugin.spring") version "1.9.0"
 }
@@ -21,10 +21,10 @@ repositories {
 val commonVersion = "3.2023.06.27_13.10-a13ff6f90290"
 val testcontainersVersion = "1.18.3"
 val logstashEncoderVersion = "7.4"
-val shedlockVersion = "5.5.0"
+val shedlockVersion = "5.6.0"
 val tokenSupportVersion = "3.1.0"
 val okHttpVersion = "4.11.0"
-val mockOauth2ServerVersion = "0.5.10"
+val mockOauth2ServerVersion = "1.0.0"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
