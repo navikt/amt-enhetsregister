@@ -22,7 +22,7 @@ val commonVersion = "3.2023.06.27_13.10-a13ff6f90290"
 val testcontainersVersion = "1.18.3"
 val logstashEncoderVersion = "7.4"
 val shedlockVersion = "5.6.0"
-val tokenSupportVersion = "3.1.2"
+val tokenSupportVersion = "3.1.3"
 val okHttpVersion = "4.11.0"
 val mockOauth2ServerVersion = "1.0.0"
 
