@@ -25,6 +25,7 @@ val shedlockVersion = "5.6.0"
 val tokenSupportVersion = "3.1.3"
 val okHttpVersion = "4.11.0"
 val mockOauth2ServerVersion = "1.0.0"
+val mockkVersion = "1.12.0"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
@@ -61,6 +62,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude("com.vaadin.external.google", "android-json")
     }
+    testImplementation("io.mockk:mockk:$mockkVersion")
 }
 
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
