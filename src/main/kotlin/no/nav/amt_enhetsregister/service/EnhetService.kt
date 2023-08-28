@@ -19,6 +19,9 @@ class EnhetService(
 
 	private val log = LoggerFactory.getLogger(this::class.java)
 
+	private val SLETTET_SUFFIX=" (slettet)"
+	private val EMPTY_STRING=""
+
 	fun hentEnhet(organisasjonsnummer: String): EnhetMedOverordnetEnhet? {
 		val enhet = enhetRepository.hentEnhet(organisasjonsnummer) ?: return fallbackTilBronnoysundOgOppdaterEnhetHvisMangler(organisasjonsnummer)
 
@@ -39,15 +42,15 @@ class EnhetService(
 			oppdaterEnheter(
 				listOf( UpsertEnhet(
 				organisasjonsnummer = organisasjonsnummer,
-				navn = "${underEnhet.navn} ${underEnhet.slettedato != (null ?: "(slettet)")}",
+				navn = "${underEnhet.navn}${if (underEnhet.slettedato == null) SLETTET_SUFFIX else EMPTY_STRING}",
 				overordnetEnhetOrgNr = underEnhet.overordnetEnhet ?: DeltaOppdateringEnhetService.UKJENT_VIRKSOMHET_NR
 			)))
 			if (underEnhet.overordnetEnhet != null) {
-				val moderEnhet = bronnoysundClient.hentModerenhet(underEnhet.overordnetEnhet)
+				val moderEnhet = hentEnhet(underEnhet.overordnetEnhet)
 				if (moderEnhet != null) {
 					return EnhetMedOverordnetEnhet(
 						organisasjonsnummer = organisasjonsnummer,
-						navn = underEnhet.navn,
+						navn = "${underEnhet.navn}${if (underEnhet.slettedato != null) SLETTET_SUFFIX else EMPTY_STRING}",
 						overordnetEnhetOrganisasjonsnummer = underEnhet.overordnetEnhet,
 						overordnetEnhetNavn = moderEnhet.navn
 					)
@@ -55,7 +58,7 @@ class EnhetService(
 			} else {
 				return EnhetMedOverordnetEnhet(
 					organisasjonsnummer = organisasjonsnummer,
-					navn = underEnhet.navn,
+					navn = "${underEnhet.navn}${if (underEnhet.slettedato != null) SLETTET_SUFFIX else EMPTY_STRING}",
 					overordnetEnhetOrganisasjonsnummer = DeltaOppdateringEnhetService.UKJENT_VIRKSOMHET_NR,
 					overordnetEnhetNavn = null
 				)
@@ -68,7 +71,7 @@ class EnhetService(
 			oppdaterEnheter(
 				listOf( UpsertEnhet(
 					organisasjonsnummer = organisasjonsnummer,
-					navn = "${moderEnhet.navn} ${moderEnhet.slettedato != (null ?: "(slettet)")}",
+					navn = "${moderEnhet.navn}${if (moderEnhet.slettedato != null) SLETTET_SUFFIX else EMPTY_STRING}",
 					overordnetEnhetOrgNr = null
 				)))
 			return EnhetMedOverordnetEnhet(
