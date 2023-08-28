@@ -2,7 +2,6 @@ package no.nav.amt_enhetsregister.service
 
 import no.nav.amt_enhetsregister.client.BronnoysundClient
 import no.nav.amt_enhetsregister.client.EnhetOppdatering
-import no.nav.amt_enhetsregister.client.EnhetOppdateringType
 import no.nav.amt_enhetsregister.repository.DeltaOppdateringProgresjonRepository
 import no.nav.amt_enhetsregister.repository.type.EnhetType
 import org.slf4j.LoggerFactory
@@ -20,24 +19,28 @@ class DeltaOppdateringEnhetService(
 		const val UKJENT_VIRKSOMHET_NR = "999999999"
 	}
 
-	private val oppdateringTyperSomSkalSkrivesTilDb = listOf(
-		EnhetOppdateringType.ENDRING,
-		EnhetOppdateringType.NY,
-		EnhetOppdateringType.UKJENT
-	)
-
 	private val log = LoggerFactory.getLogger(this::class.java)
 
 	fun deltaOppdaterModerenheter() {
 		deltaOppdaterEnhet(enhetType = EnhetType.MODERENHET) {
 			val moderenhet = bronnoysundClient.hentModerenhet(it.organisasjonsnummer)
 
-			if (moderenhet == null || moderenhet.slettedato != null) {
+			if (moderenhet == null) { // GONE
+				log.info("Moderenhet orgnr=${it.organisasjonsnummer} er fjernet fra brreg")
+
+				return@deltaOppdaterEnhet EnhetService.UpsertEnhet(
+					organisasjonsnummer = it.organisasjonsnummer,
+					navn = "Fjernet virksomhet",
+					overordnetEnhetOrgNr = null,
+				)
+			}
+
+			if ( moderenhet.slettedato != null) {
 				log.info("Moderenhet orgnr=${it.organisasjonsnummer} er slettet fra brreg")
 
 				return@deltaOppdaterEnhet EnhetService.UpsertEnhet(
 					organisasjonsnummer = it.organisasjonsnummer,
-					navn = "Slettet virksomhet",
+					navn = "${moderenhet.navn} (slettet)",
 					overordnetEnhetOrgNr = null,
 				)
 			}
@@ -54,12 +57,22 @@ class DeltaOppdateringEnhetService(
 		deltaOppdaterEnhet(enhetType = EnhetType.UNDERENHET) {
 			val underenhet = bronnoysundClient.hentUnderenhet(it.organisasjonsnummer)
 
-			if (underenhet == null || underenhet.slettedato != null) {
+			if (underenhet == null) { // GONE
+				log.info("Underenhet orgnr=${it.organisasjonsnummer} er fjernet fra brreg")
+
+				return@deltaOppdaterEnhet EnhetService.UpsertEnhet(
+					organisasjonsnummer = it.organisasjonsnummer,
+					navn = "Fjernet virksomhet",
+					overordnetEnhetOrgNr = UKJENT_VIRKSOMHET_NR
+				)
+			}
+
+			if (underenhet.slettedato != null) {
 				log.info("Underenhet orgnr=${it.organisasjonsnummer} er slettet fra brreg")
 
 				return@deltaOppdaterEnhet EnhetService.UpsertEnhet(
 					organisasjonsnummer = it.organisasjonsnummer,
-					navn = "Slettet virksomhet",
+					navn = "${underenhet.navn} (slettet)",
 					overordnetEnhetOrgNr = UKJENT_VIRKSOMHET_NR
 				)
 			}
@@ -101,7 +114,6 @@ class DeltaOppdateringEnhetService(
 		}
 
 		val upserts = oppdateringer
-			.filter { oppdateringTyperSomSkalSkrivesTilDb.contains(it.endringstype) }
 			.mapNotNull { mapper.invoke(it) }
 
 		enhetService.oppdaterEnheter(upserts)
