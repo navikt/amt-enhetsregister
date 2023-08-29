@@ -12,6 +12,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.transaction.TransactionStatus
+import org.springframework.transaction.support.SimpleTransactionStatus
 import org.springframework.transaction.support.TransactionTemplate
 import java.time.ZonedDateTime
 import java.util.function.Consumer
@@ -34,7 +35,7 @@ class EnhetServiceTest {
 			transactionTemplate.executeWithoutResult(any())
 		} answers { invocation ->
 			val action = invocation.invocation.args[0] as Consumer<TransactionStatus>
-			action.accept(DummyTransactionStatus())
+			action.accept(SimpleTransactionStatus())
 		}
 		// hent underenhet via moderenhet-api gir ikke noe resultat
 		every {
