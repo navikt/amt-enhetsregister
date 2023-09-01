@@ -89,7 +89,7 @@ class BronnoysundClientImpl(
 			.build()
 
 		httpClient.newCall(request).execute().use { response ->
-			if (response.code == HttpStatus.GONE.value()) {
+			if (response.code == HttpStatus.GONE.value() || response.code == HttpStatus.NOT_FOUND.value()) {
 				return null
 			}
 
@@ -117,7 +117,7 @@ class BronnoysundClientImpl(
 			.build()
 
 		httpClient.newCall(request).execute().use { response ->
-			if (response.code == HttpStatus.GONE.value()) {
+			if (response.code == HttpStatus.GONE.value() || response.code == HttpStatus.NOT_FOUND.value()) {
 				return null
 			}
 
