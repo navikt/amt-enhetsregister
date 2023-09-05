@@ -194,6 +194,34 @@ class EnhetServiceTest {
 	}
 
 	@Test
+	fun `hentEnhet - enhet finnes ikke i db, er moderenhet - underhent fra brreg er null, skal hente moderenhet fra brreg`() {
+		val moderenhet = Moderenhet(ORGNR_MODERENHET, "Ny Moderenhet", null)
+		// Finner ikke enhet i db
+		every {
+			enhetRepository.hentEnhet(any())
+		} returns null
+		// Finner ikke underenhet i brreg
+		every {
+			bronnoysundClient.hentUnderenhet(ORGNR_MODERENHET)
+		} returns null
+		// Finner moderenhet i brreg
+		every {
+			bronnoysundClient.hentModerenhet(ORGNR_MODERENHET)
+		} returns moderenhet
+
+		val enhet = enhetService.hentEnhet(ORGNR_MODERENHET)
+
+		verify(exactly = 1) { bronnoysundClient.hentUnderenhet(ORGNR_MODERENHET) }
+		verify(exactly = 1) { bronnoysundClient.hentModerenhet(ORGNR_MODERENHET) }
+
+		assertThat(enhet?.navn).isEqualTo(moderenhet.navn)
+		assertThat(enhet?.organisasjonsnummer).isEqualTo(moderenhet.organisasjonsnummer)
+		assertThat(enhet?.overordnetEnhetOrganisasjonsnummer).isNull()
+		assertThat(enhet?.overordnetEnhetNavn).isNull()
+	}
+
+
+	@Test
 	fun `hva skjer naar enhet ikke finnes noe sted`() {
 		// Finner ikke enhet i db
 		every {
@@ -205,6 +233,10 @@ class EnhetServiceTest {
 		} returns null
 
 		val enhet = enhetService.hentEnhet(ORGNR_UNDERENHET)
+
+		verify(exactly = 1) { bronnoysundClient.hentUnderenhet(ORGNR_UNDERENHET) }
+		verify(exactly = 1) { bronnoysundClient.hentModerenhet(ORGNR_UNDERENHET) }
+
 		assertThat(enhet).isNull()
 	}
 
