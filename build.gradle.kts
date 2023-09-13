@@ -15,10 +15,10 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 repositories {
     mavenCentral()
     maven { setUrl("https://packages.confluent.io/maven/") }
-    maven { setUrl("https://jitpack.io") }
+    maven { setUrl("https://github-package-registry-mirror.gc.nav.no/cached/maven-release") }
 }
 
-val commonVersion = "3.2023.06.27_13.10-a13ff6f90290"
+val commonVersion = "3.2023.09.13_04.55-a8ff452fbd94"
 val testcontainersVersion = "1.19.0"
 val logstashEncoderVersion = "7.4"
 val shedlockVersion = "5.7.0"
@@ -40,9 +40,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    implementation("com.github.navikt.common-java-modules:job:$commonVersion")
-    implementation("com.github.navikt.common-java-modules:rest:$commonVersion")
-    implementation("com.github.navikt.common-java-modules:kafka:$commonVersion")
+    implementation("no.nav.common:job:$commonVersion")
+    implementation("no.nav.common:rest:$commonVersion")
+    implementation("no.nav.common:kafka:$commonVersion")
 
     implementation("org.flywaydb:flyway-core")
     implementation("io.micrometer:micrometer-registry-prometheus")
