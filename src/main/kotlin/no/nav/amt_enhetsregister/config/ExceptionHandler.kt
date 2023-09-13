@@ -16,7 +16,7 @@ class ExceptionHandler {
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ExceptionHandler(NoSuchElementException::class)
 	fun handleNotFoundException(e: NoSuchElementException): ResponseEntity<Response> {
-		log.warn(e.message, e)
+		log.info(e.message, e)
 		val status = HttpStatus.NOT_FOUND
 
 		return ResponseEntity
