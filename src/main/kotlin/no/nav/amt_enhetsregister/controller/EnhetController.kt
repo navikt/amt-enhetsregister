@@ -16,7 +16,13 @@ class EnhetController(private val enhetService: EnhetService) {
 	@Protected
 	@GetMapping("/{organisasjonsnummer}")
 	fun hentEnhet(@PathVariable("organisasjonsnummer") organisasjonsnummer: String): EnhetDto {
+		validerOrganisasjonsnummer(organisasjonsnummer)
 		return enhetService.hentEnhet(organisasjonsnummer)?.tilDto() ?: throw NoSuchElementException("Fant ikke enhet med organisasjonsnummer: $organisasjonsnummer")
 	}
 
+	private fun validerOrganisasjonsnummer(organisasjonsnummer: String) {
+		if (organisasjonsnummer.trim().length != 9 || !organisasjonsnummer.trim().matches("""\d{9}""".toRegex())) {
+			throw IllegalArgumentException("Ugyldig organisasjonsnummer $organisasjonsnummer")
+		}
+	}
 }

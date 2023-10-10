@@ -44,7 +44,7 @@ class EnhetControllerTest {
 	@Test
 	fun `hentEnhet should return 401 when not authenticated`() {
 		val response = mockMvc.perform(
-			MockMvcRequestBuilders.get("/api/enhet/1234")
+			MockMvcRequestBuilders.get("/api/enhet/123456789")
 		).andReturn().response
 
 		assertEquals(401, response.status)
@@ -54,7 +54,7 @@ class EnhetControllerTest {
 	fun `hentEnhet should return 200 when enhet exists`() {
 		`when`(enhetService.hentEnhet(anyString())).thenReturn(
 			EnhetService.EnhetMedOverordnetEnhet(
-				organisasjonsnummer = "1234",
+				organisasjonsnummer = "123456789",
 				navn = "test",
 				overordnetEnhetOrganisasjonsnummer = null,
 				overordnetEnhetNavn = null,
@@ -64,11 +64,11 @@ class EnhetControllerTest {
 		val token = server.issueToken("azuread", "test", "test").serialize()
 
 		val response = mockMvc.perform(
-			MockMvcRequestBuilders.get("/api/enhet/1234")
+			MockMvcRequestBuilders.get("/api/enhet/123456789")
 				.header("Authorization", "Bearer $token")
 		).andReturn().response
 
-		verify(enhetService, times(1)).hentEnhet("1234")
+		verify(enhetService, times(1)).hentEnhet("123456789")
 
 		assertEquals(200, response.status)
 	}
@@ -80,11 +80,24 @@ class EnhetControllerTest {
 		val token = server.issueToken("azuread", "test", "test").serialize()
 
 		val response = mockMvc.perform(
-			MockMvcRequestBuilders.get("/api/enhet/999222")
+			MockMvcRequestBuilders.get("/api/enhet/999222111")
 				.header("Authorization", "Bearer $token")
 		).andReturn().response
 
 		assertEquals(404, response.status)
 	}
 
+	@Test
+	fun `hentEnhet returnerer 400 hvis orgnummer har ugyldig format`() {
+		`when`(enhetService.hentEnhet(anyString())).thenReturn(null)
+
+		val token = server.issueToken("azuread", "test", "test").serialize()
+
+		val response = mockMvc.perform(
+			MockMvcRequestBuilders.get("/api/enhet/999222111test")
+				.header("Authorization", "Bearer $token")
+		).andReturn().response
+
+		assertEquals(400, response.status)
+	}
 }
