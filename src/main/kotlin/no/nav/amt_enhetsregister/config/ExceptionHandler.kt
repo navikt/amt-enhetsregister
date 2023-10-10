@@ -30,6 +30,23 @@ class ExceptionHandler {
 			)
 	}
 
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(IllegalArgumentException::class)
+	fun handleIllegalArgumentException(e: IllegalArgumentException): ResponseEntity<Response> {
+		log.info(e.message, e)
+		val status = HttpStatus.BAD_REQUEST
+
+		return ResponseEntity
+			.status(status)
+			.body(
+				Response(
+					status = status.value(),
+					title = status,
+					detail = e.message,
+				)
+			)
+	}
+
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	data class Response(
 		val status: Int,
