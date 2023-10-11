@@ -35,7 +35,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-configuration-processor")
-    implementation("org.yaml:snakeyaml:2.0")//overstyrer sårbar dependency
+    implementation("org.yaml:snakeyaml:2.2")//overstyrer sårbar dependency
     
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
