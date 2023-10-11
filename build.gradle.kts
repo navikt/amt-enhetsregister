@@ -35,6 +35,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-configuration-processor")
+    implementation("org.yaml:snakeyaml:2.0")//overstyrer sårbar dependency
     
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
@@ -42,7 +43,11 @@ dependencies {
 
     implementation("no.nav.common:job:$commonVersion")
     implementation("no.nav.common:rest:$commonVersion")
-    implementation("no.nav.common:kafka:$commonVersion")
+    implementation("no.nav.common:kafka:$commonVersion") {
+        exclude("org.apache.avro", "avro")
+        exclude("org.xerial.snappy", "snappy-java")
+        exclude("io.confluent","kafka-avro-serializer")
+    }
 
     implementation("org.flywaydb:flyway-core")
     implementation("io.micrometer:micrometer-registry-prometheus")
