@@ -19,7 +19,7 @@ repositories {
 }
 
 val commonVersion = "3.2023.10.18_13.28-58db82ecb1a5"
-val testcontainersVersion = "1.19.1"
+val testcontainersVersion = "1.19.2"
 val logstashEncoderVersion = "7.4"
 val shedlockVersion = "5.10.0"
 val tokenSupportVersion = "3.1.8"
@@ -57,7 +57,8 @@ dependencies {
     implementation("no.nav.security:token-validation-spring:$tokenSupportVersion")
     implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
     runtimeOnly("org.postgresql:postgresql")
-    
+
+    testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
     testImplementation("org.testcontainers:kafka:$testcontainersVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
