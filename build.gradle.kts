@@ -57,7 +57,8 @@ dependencies {
     implementation("no.nav.security:token-validation-spring:$tokenSupportVersion")
     implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
     runtimeOnly("org.postgresql:postgresql")
-    
+
+    testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
     testImplementation("org.testcontainers:kafka:$testcontainersVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
