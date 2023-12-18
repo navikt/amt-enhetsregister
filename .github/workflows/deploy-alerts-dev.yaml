@@ -8,14 +8,16 @@ on:
       - '.github/workflows/deploy-alerts-dev.yaml'
 jobs:
   apply-alerts:
+    permissions:
+      contents: "write"
+      id-token: "write"
     name: Apply alerts to dev
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: deploy to dev
-        uses: nais/deploy/actions/deploy@v1
+        uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
           RESOURCE: .nais/alerts-dev.yaml
