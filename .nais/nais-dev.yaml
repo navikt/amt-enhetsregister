@@ -36,9 +36,6 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: amt-tiltak
-          namespace: amt
-          cluster: dev-gcp
         - application: amt-arrangor
           namespace: amt
           cluster: dev-gcp
