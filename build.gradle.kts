@@ -24,10 +24,10 @@ val commonVersion = "3.2023.12.12_13.53-510909d4aa1a"
 val testcontainersVersion = "1.19.3"
 val logstashEncoderVersion = "7.4"
 val shedlockVersion = "5.10.2"
-val tokenSupportVersion = "3.2.0"
+val tokenSupportVersion = "4.0.3"
 val okHttpVersion = "4.12.0"
 val mockOauth2ServerVersion = "2.1.0"
-val mockkVersion = "1.13.8"
+val mockkVersion = "1.13.9"
 
 extra["logback.version"] = "1.4.14"
 
