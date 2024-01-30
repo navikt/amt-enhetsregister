@@ -2,11 +2,14 @@ package no.nav.amt_enhetsregister.service
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.amt_enhetsregister.client.*
+import no.nav.amt_enhetsregister.client.BronnoysundClient
+import no.nav.amt_enhetsregister.client.EnhetOppdatering
+import no.nav.amt_enhetsregister.client.EnhetOppdateringType
+import no.nav.amt_enhetsregister.client.Moderenhet
+import no.nav.amt_enhetsregister.client.Underenhet
 import no.nav.amt_enhetsregister.repository.DeltaOppdateringProgresjonRepository
 import no.nav.amt_enhetsregister.repository.type.DeltaEnhetOppdateringProgresjon
 import no.nav.amt_enhetsregister.repository.type.EnhetType
-import no.nav.amt_enhetsregister.service.DeltaOppdateringEnhetService.Companion.UKJENT_VIRKSOMHET_NR
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.ZonedDateTime
@@ -296,13 +299,22 @@ class DeltaOppdateringEnhetServiceTest {
 			navn = "Orgnavn",
 			slettedato = ZonedDateTime.now().toString(),
 			overordnetEnhet = null)
+		every { enhetService.hentEnhet("899000000")
+		} returns EnhetService.EnhetMedOverordnetEnhet(
+			organisasjonsnummer = "899000000",
+			navn = "Orgnavn",
+			overordnetEnhetOrganisasjonsnummer = "999000000",
+			overordnetEnhetNavn = "Moderenhetnavn"
+		)
+
 		deltaOppdateringEnhetService.deltaOppdaterUnderenheter()
+
 		verify(exactly = 1) {
 			enhetService.oppdaterEnheter(listOf(
 				EnhetService.UpsertEnhet(
 					organisasjonsnummer = "899000000",
 					navn = "Orgnavn (slettet)",
-					overordnetEnhetOrgNr = UKJENT_VIRKSOMHET_NR
+					overordnetEnhetOrgNr = "999000000"
 				)
 			))
 		}
@@ -322,13 +334,22 @@ class DeltaOppdateringEnhetServiceTest {
 		every {
 			bronnoysundClient.hentUnderenhet("899000000")
 		} returns null
+		every { enhetService.hentEnhet("899000000")
+		} returns EnhetService.EnhetMedOverordnetEnhet(
+			organisasjonsnummer = "899000000",
+			navn = "Orgnavn",
+			overordnetEnhetOrganisasjonsnummer = "999000000",
+			overordnetEnhetNavn = "Moderenhetnavn"
+		)
+
 		deltaOppdateringEnhetService.deltaOppdaterUnderenheter()
+
 		verify(exactly = 1) {
 			enhetService.oppdaterEnheter(listOf(
 				EnhetService.UpsertEnhet(
 					organisasjonsnummer = "899000000",
 					navn = "Fjernet virksomhet",
-					overordnetEnhetOrgNr = UKJENT_VIRKSOMHET_NR
+					overordnetEnhetOrgNr = "999000000"
 				)
 			))
 		}
