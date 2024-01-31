@@ -16,7 +16,6 @@ class DeltaOppdateringEnhetService(
 
 	companion object {
 		const val OPPDATERINGER_SIZE = 500
-		const val UKJENT_VIRKSOMHET_NR = "999999999"
 	}
 
 	private val log = LoggerFactory.getLogger(this::class.java)
