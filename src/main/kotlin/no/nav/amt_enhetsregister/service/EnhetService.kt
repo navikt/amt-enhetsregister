@@ -43,7 +43,7 @@ class EnhetService(
 				listOf( UpsertEnhet(
 				organisasjonsnummer = organisasjonsnummer,
 				navn = "${underEnhet.navn}${if (underEnhet.slettedato == null) SLETTET_SUFFIX else EMPTY_STRING}",
-				overordnetEnhetOrgNr = underEnhet.overordnetEnhet ?: DeltaOppdateringEnhetService.UKJENT_VIRKSOMHET_NR
+				overordnetEnhetOrgNr = underEnhet.overordnetEnhet
 			)))
 			if (underEnhet.overordnetEnhet != null) {
 				val moderEnhet = hentEnhet(underEnhet.overordnetEnhet)
@@ -59,7 +59,7 @@ class EnhetService(
 				return EnhetMedOverordnetEnhet(
 					organisasjonsnummer = organisasjonsnummer,
 					navn = "${underEnhet.navn}${if (underEnhet.slettedato != null) SLETTET_SUFFIX else EMPTY_STRING}",
-					overordnetEnhetOrganisasjonsnummer = DeltaOppdateringEnhetService.UKJENT_VIRKSOMHET_NR,
+					overordnetEnhetOrganisasjonsnummer = null,
 					overordnetEnhetNavn = null
 				)
 			}

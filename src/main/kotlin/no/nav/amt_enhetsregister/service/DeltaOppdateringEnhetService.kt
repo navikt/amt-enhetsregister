@@ -16,7 +16,6 @@ class DeltaOppdateringEnhetService(
 
 	companion object {
 		const val OPPDATERINGER_SIZE = 500
-		const val UKJENT_VIRKSOMHET_NR = "999999999"
 	}
 
 	private val log = LoggerFactory.getLogger(this::class.java)
@@ -59,31 +58,34 @@ class DeltaOppdateringEnhetService(
 
 			if (underenhet == null) { // GONE
 				log.info("Underenhet orgnr=${it.organisasjonsnummer} er fjernet fra brreg")
+				val opprinneligOverordnetEnhet = enhetService.hentEnhet(it.organisasjonsnummer)?.overordnetEnhetOrganisasjonsnummer
 
 				return@deltaOppdaterEnhet EnhetService.UpsertEnhet(
 					organisasjonsnummer = it.organisasjonsnummer,
 					navn = "Fjernet virksomhet",
-					overordnetEnhetOrgNr = UKJENT_VIRKSOMHET_NR
+					overordnetEnhetOrgNr = opprinneligOverordnetEnhet
 				)
 			}
 
 			if (underenhet.slettedato != null) {
 				log.info("Underenhet orgnr=${it.organisasjonsnummer} er slettet fra brreg")
+				val opprinneligOverordnetEnhet = enhetService.hentEnhet(it.organisasjonsnummer)?.overordnetEnhetOrganisasjonsnummer
 
 				return@deltaOppdaterEnhet EnhetService.UpsertEnhet(
 					organisasjonsnummer = it.organisasjonsnummer,
 					navn = "${underenhet.navn} (slettet)",
-					overordnetEnhetOrgNr = UKJENT_VIRKSOMHET_NR
+					overordnetEnhetOrgNr = opprinneligOverordnetEnhet
 				)
 			}
 
 			if (underenhet.overordnetEnhet == null) {
 				log.warn("Underenhet orgnr=${underenhet.organisasjonsnummer} mangler overordnet enhet. oppdatering_id=${it.oppdateringId}")
+				val opprinneligOverordnetEnhet = enhetService.hentEnhet(it.organisasjonsnummer)?.overordnetEnhetOrganisasjonsnummer
 
 				return@deltaOppdaterEnhet EnhetService.UpsertEnhet(
 					organisasjonsnummer = it.organisasjonsnummer,
 					navn = underenhet.navn,
-					overordnetEnhetOrgNr = UKJENT_VIRKSOMHET_NR
+					overordnetEnhetOrgNr = opprinneligOverordnetEnhet
 				)
 			}
 

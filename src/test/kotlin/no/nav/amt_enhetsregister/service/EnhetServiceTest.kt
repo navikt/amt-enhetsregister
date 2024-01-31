@@ -184,7 +184,7 @@ class EnhetServiceTest {
 		assertThat(enhet?.navn).isEqualTo("Underenhet1 (slettet)")
 		assertThat(enhet?.overordnetEnhetNavn).isNull()
 		assertThat(enhet?.organisasjonsnummer).isEqualTo(ORGNR_UNDERENHET)
-		assertThat(enhet?.overordnetEnhetOrganisasjonsnummer).isEqualTo(DeltaOppdateringEnhetService.UKJENT_VIRKSOMHET_NR)
+		assertThat(enhet?.overordnetEnhetOrganisasjonsnummer).isNull()
 
 		// Db oppdatert og kafkamelding publisert etter info hentet fra brreg
 		verify(exactly = 1) {
