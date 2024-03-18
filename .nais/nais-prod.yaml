@@ -65,3 +65,11 @@ spec:
           - name: amt-enhetsregister
             envVarPrefix: DB
 
+  observability:
+      autoInstrumentation:
+        enabled: true
+        runtime: java
+      logging:
+        destinations:
+          - id: elastic
+          - id: loki
