@@ -20,16 +20,17 @@ repositories {
     maven { setUrl("https://github-package-registry-mirror.gc.nav.no/cached/maven-release") }
 }
 
-val commonVersion = "3.2023.12.12_13.53-510909d4aa1a"
+val commonVersion = "3.2024.04.10_12.03-fddb587e3a68"
 val testcontainersVersion = "1.19.7"
 val logstashEncoderVersion = "7.4"
 val shedlockVersion = "5.13.0"
 val tokenSupportVersion = "4.1.4"
 val okHttpVersion = "4.12.0"
-val mockOauth2ServerVersion = "2.1.3"
+val mockOauth2ServerVersion = "2.1.4"
 val mockkVersion = "1.13.10"
 
 extra["postgresql.version"] = "42.7.2"
+extra["jackson-bom.version"] = "2.17.0"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
