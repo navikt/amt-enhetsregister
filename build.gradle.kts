@@ -54,6 +54,7 @@ dependencies {
     }
 
     implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-database-postgresql")
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:$shedlockVersion")
     implementation("net.javacrumbs.shedlock:shedlock-core:$shedlockVersion")
