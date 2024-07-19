@@ -27,7 +27,7 @@ val shedlockVersion = "5.13.0"
 val tokenSupportVersion = "5.0.1"
 val okHttpVersion = "4.12.0"
 val mockOauth2ServerVersion = "2.1.8"
-val mockkVersion = "1.13.11"
+val mockkVersion = "1.13.12"
 
 extra["postgresql.version"] = "42.7.2"
 extra["jackson-bom.version"] = "2.17.0"
