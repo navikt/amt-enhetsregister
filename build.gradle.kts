@@ -26,7 +26,7 @@ val logstashEncoderVersion = "8.0"
 val shedlockVersion = "5.15.0"
 val tokenSupportVersion = "5.0.2"
 val okHttpVersion = "4.12.0"
-val mockOauth2ServerVersion = "2.1.8"
+val mockOauth2ServerVersion = "2.1.9"
 val mockkVersion = "1.13.12"
 
 extra["postgresql.version"] = "42.7.2"
