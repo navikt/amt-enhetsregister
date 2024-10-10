@@ -27,7 +27,7 @@ val shedlockVersion = "5.16.0"
 val tokenSupportVersion = "5.0.5"
 val okHttpVersion = "4.12.0"
 val mockOauth2ServerVersion = "2.1.9"
-val mockkVersion = "1.13.12"
+val mockkVersion = "1.13.13"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
