@@ -26,7 +26,7 @@ val logstashEncoderVersion = "8.1"
 val shedlockVersion = "6.7.0"
 val tokenSupportVersion = "5.0.29"
 val okHttpVersion = "4.12.0"
-val mockOauth2ServerVersion = "2.1.11"
+val mockOauth2ServerVersion = "2.2.1"
 val mockkVersion = "1.14.2"
 
 dependencies {
