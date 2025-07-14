@@ -5,10 +5,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class IntegrationTestConfiguration {
+class IntegrationTestConfiguration {
 
 	@Bean
-	open fun kafkaProperties(): KafkaProperties = SingletonKafkaContainer.getKafkaProperties()
-
-
+	fun kafkaProperties(): KafkaProperties = SingletonKafkaContainer.getKafkaProperties()
 }
