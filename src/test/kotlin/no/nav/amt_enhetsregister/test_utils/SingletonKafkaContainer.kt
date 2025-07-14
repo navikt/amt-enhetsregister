@@ -7,39 +7,33 @@ import org.apache.kafka.common.serialization.ByteArraySerializer
 import org.slf4j.LoggerFactory
 import org.testcontainers.kafka.KafkaContainer
 import org.testcontainers.utility.DockerImageName
-import java.util.*
+import java.util.Properties
 
 object SingletonKafkaContainer {
-
-	private const val producerId = "INTEGRATION_PRODUCER"
-	private const val consumerId = "INTEGRATION_CONSUMER"
+	private const val PRODUCER_ID = "INTEGRATION_PRODUCER"
+	private const val CONSUMER_ID = "INTEGRATION_CONSUMER"
 
 	private val log = LoggerFactory.getLogger(javaClass)
 
 	private var kafkaContainer: KafkaContainer? = null
 
-
 	fun getKafkaProperties(): KafkaProperties {
 		val host = getHost()
 
 		val properties = object : KafkaProperties {
-			override fun consumer(): Properties {
-				return KafkaPropertiesBuilder.consumerBuilder()
-					.withBrokerUrl(host)
-					.withBaseProperties()
-					.withConsumerGroupId(consumerId)
-					.withDeserializers(ByteArrayDeserializer::class.java, ByteArrayDeserializer::class.java)
-					.build()
-			}
+			override fun consumer(): Properties = KafkaPropertiesBuilder.consumerBuilder()
+				.withBrokerUrl(host)
+				.withBaseProperties()
+				.withConsumerGroupId(CONSUMER_ID)
+				.withDeserializers(ByteArrayDeserializer::class.java, ByteArrayDeserializer::class.java)
+				.build()
 
-			override fun producer(): Properties {
-				return KafkaPropertiesBuilder.producerBuilder()
-					.withBrokerUrl(host)
-					.withBaseProperties()
-					.withProducerId(producerId)
-					.withSerializers(ByteArraySerializer::class.java, ByteArraySerializer::class.java)
-					.build()
-			}
+			override fun producer(): Properties = KafkaPropertiesBuilder.producerBuilder()
+				.withBrokerUrl(host)
+				.withBaseProperties()
+				.withProducerId(PRODUCER_ID)
+				.withSerializers(ByteArraySerializer::class.java, ByteArraySerializer::class.java)
+				.build()
 		}
 
 		return properties

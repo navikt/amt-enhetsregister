@@ -15,9 +15,7 @@ class EnhetRepositoryTest(
 ) : RepositoryTestBase() {
 
 	@BeforeEach
-	fun setUp() {
-		cleanAndInitDatabase(dataSource,"/db/enhet-data.sql")
-	}
+	fun setUp() = cleanAndInitDatabase(dataSource,"/db/enhet-data.sql")
 
 	@Test
 	fun `upsertEnhet() skal lagre ny enhet`() {

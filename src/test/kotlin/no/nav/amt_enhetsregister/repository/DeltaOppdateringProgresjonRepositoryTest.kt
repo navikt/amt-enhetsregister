@@ -14,9 +14,7 @@ class DeltaOppdateringProgresjonRepositoryTest(
 ) : RepositoryTestBase() {
 
 	@BeforeEach
-	fun setUp() {
-		cleanAndInitDatabase(dataSource,"/db/delta-enhet-oppdatering.sql")
-	}
+	fun setUp() = cleanAndInitDatabase(dataSource,"/db/delta-enhet-oppdatering.sql")
 
 	@Test
 	fun `hentOppdateringProgresjon skal hente oppdatering progresjon for moderenhet`() {
