@@ -27,12 +27,12 @@ val okHttpVersion = "5.1.0"
 val mockOauth2ServerVersion = "2.2.1"
 val mockkVersion = "1.14.4"
 
-
 dependencyManagement {
     imports {
         mavenBom("org.testcontainers:testcontainers-bom:$testcontainersVersion")
     }
 }
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
