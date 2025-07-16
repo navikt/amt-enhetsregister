@@ -27,6 +27,12 @@ val okHttpVersion = "5.1.0"
 val mockOauth2ServerVersion = "2.2.1"
 val mockkVersion = "1.14.4"
 
+
+dependencyManagement {
+    imports {
+        mavenBom("org.testcontainers:testcontainers-bom:$testcontainersVersion")
+    }
+}
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -56,8 +62,8 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
     runtimeOnly("org.postgresql:postgresql")
 
-    testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
-    testImplementation("org.testcontainers:kafka:$testcontainersVersion")
+    testImplementation("org.testcontainers:postgresql")
+    testImplementation("org.testcontainers:kafka")
     testImplementation("no.nav.security:mock-oauth2-server:$mockOauth2ServerVersion")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okHttpVersion")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
