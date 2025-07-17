@@ -8,7 +8,8 @@ import no.nav.common.kafka.consumer.util.deserializer.Deserializers
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.stereotype.Component
-import java.util.*
+import java.util.Collections
+import java.util.Properties
 
 @Component
 class KafkaMessageConsumer(
@@ -22,7 +23,7 @@ class KafkaMessageConsumer(
 
 	init {
 		val properties = Properties()
-		kafkaProperties.consumer().forEach{ properties[it.key] = it.value }
+		kafkaProperties.consumer().forEach { properties[it.key] = it.value }
 		properties[ConsumerConfig.GROUP_ID_CONFIG] = javaClass.canonicalName
 
 		val configs = listOf(
@@ -37,41 +38,28 @@ class KafkaMessageConsumer(
 		client.start()
 	}
 
-	fun getRecords(topic: Topic): List<ConsumerRecord<String, String?>> {
-		return records.filter { it.topic() == mapKafkaTopic(topic) }
-	}
+	fun getLatestRecord(topic: Topic): ConsumerRecord<String, String?>? =
+		records.filter { it.topic() == mapKafkaTopic(topic) }.maxByOrNull { it.offset() }
 
-	fun getLatestRecord(topic: Topic):  ConsumerRecord<String, String?>? {
-		return records.filter { it.topic() == mapKafkaTopic(topic) }.maxByOrNull { it.offset() }
-	}
-
-	fun reset() {
-		records.clear()
-	}
-
-	private fun createTopicConfig(topic: String): KafkaConsumerClientBuilder.TopicConfig<String, String> {
-		return KafkaConsumerClientBuilder.TopicConfig<String, String>()
+	private fun createTopicConfig(topic: String): KafkaConsumerClientBuilder.TopicConfig<String, String> =
+		KafkaConsumerClientBuilder.TopicConfig<String, String>()
 			.withConsumerConfig(
 				topic,
 				Deserializers.stringDeserializer(),
 				Deserializers.stringDeserializer(),
 				::handleRecord
 			)
-	}
 
 	private fun handleRecord(record: ConsumerRecord<String, String?>) {
 		records.add(record)
 	}
 
-	private fun mapKafkaTopic(topic: Topic): String {
-		return when(topic) {
-			Topic.VIRKSOMHETER -> kafkaTopicProperties.virksomheterTopic
-		}
+	private fun mapKafkaTopic(topic: Topic): String = when (topic) {
+		Topic.VIRKSOMHETER -> kafkaTopicProperties.virksomheterTopic
 	}
 
 	enum class Topic {
 		VIRKSOMHETER,
 	}
-
 }
 

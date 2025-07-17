@@ -1,20 +1,16 @@
 package no.nav.amt_enhetsregister.service
 
 import no.nav.amt_enhetsregister.kafka.VirksomhetV1Dto
-import no.nav.amt_enhetsregister.test_utils.AsyncUtils
 import no.nav.amt_enhetsregister.test_utils.IntegrationTest
 import no.nav.amt_enhetsregister.test_utils.KafkaMessageConsumer
+import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 
-class KafkaProducerTest() : IntegrationTest() {
-
-	@Autowired
-	lateinit var kafkaProducerService: KafkaProducerService
-
-	@Autowired
-	lateinit var kafkaMessageConsumer: KafkaMessageConsumer
+class KafkaProducerTest(
+	private val kafkaProducerService: KafkaProducerService,
+	private val kafkaMessageConsumer: KafkaMessageConsumer
+) : IntegrationTest() {
 
 	@Test
 	fun `skal publisere virksomhet på topic`() {
@@ -25,7 +21,7 @@ class KafkaProducerTest() : IntegrationTest() {
 		)
 		kafkaProducerService.publiserVirksomhet(virksomhetV1Dto)
 
-		AsyncUtils.eventually {
+		await().untilAsserted {
 			val record = kafkaMessageConsumer.getLatestRecord(KafkaMessageConsumer.Topic.VIRKSOMHETER)
 			assertEquals(record?.key(), virksomhetV1Dto.organisasjonsnummer)
 			val expectedJson = """
@@ -33,6 +29,5 @@ class KafkaProducerTest() : IntegrationTest() {
 			""".trimIndent()
 			assertEquals(record?.value(), expectedJson)
 		}
-
 	}
 }

@@ -1,34 +1,29 @@
 package no.nav.amt_enhetsregister.repository
 
 import no.nav.amt_enhetsregister.repository.type.UpsertEnhetCmd
-import no.nav.amt_enhetsregister.test_utils.DatabaseTestUtils
-import no.nav.amt_enhetsregister.test_utils.SingletonPostgresContainer
-import org.junit.jupiter.api.Assertions.*
+import no.nav.amt_enhetsregister.test_utils.DatabaseTestUtils.cleanAndInitDatabase
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import org.springframework.boot.test.context.SpringBootTest
 
-class EnhetRepositoryTest {
-
-	private val dataSource = SingletonPostgresContainer.getDataSource()
-
-	lateinit var enhetRepository: EnhetRepository
+@SpringBootTest(classes = [EnhetRepository::class])
+class EnhetRepositoryTest(
+	private val enhetRepository: EnhetRepository
+) : RepositoryTestBase() {
 
 	@BeforeEach
-	fun migrate() {
-		val namedJdbcTemplate = NamedParameterJdbcTemplate(dataSource)
-		enhetRepository = EnhetRepository(namedJdbcTemplate)
-		DatabaseTestUtils.cleanAndInitDatabase(dataSource,"/db/enhet-data.sql")
-	}
+	fun setUp() = cleanAndInitDatabase(dataSource,"/db/enhet-data.sql")
 
 	@Test
 	fun `upsertEnhet() skal lagre ny enhet`() {
 		val enhet = UpsertEnhetCmd(
-				navn = "Test 4",
-				overordnetEnhet = null,
-				organisasjonsnummer = "999888777"
-			)
+			navn = "Test 4",
+			overordnetEnhet = null,
+			organisasjonsnummer = "999888777"
+		)
 
 		enhetRepository.upsertEnhet(enhet)
 
@@ -40,10 +35,10 @@ class EnhetRepositoryTest {
 	@Test
 	fun `upsertEnhet() skal oppdatere enhet hvis likt organisasjonsnummer`() {
 		val enhet = UpsertEnhetCmd(
-				navn = "Test 1 - updated",
-				overordnetEnhet = null,
-				organisasjonsnummer = "123456789"
-			)
+			navn = "Test 1 - updated",
+			overordnetEnhet = null,
+			organisasjonsnummer = "123456789"
+		)
 
 		enhetRepository.upsertEnhet(enhet)
 
@@ -52,7 +47,6 @@ class EnhetRepositoryTest {
 		assertEquals("123456789", testEnhet1?.organisasjonsnummer)
 		assertEquals("Test 1 - updated", testEnhet1?.navn)
 		assertNull(testEnhet1?.overordnetEnhet)
-
 	}
 
 	@Test
@@ -68,5 +62,4 @@ class EnhetRepositoryTest {
 		assertEquals("Test 2", testEnhet2?.navn)
 		assertNull(testEnhet2?.overordnetEnhet)
 	}
-
 }

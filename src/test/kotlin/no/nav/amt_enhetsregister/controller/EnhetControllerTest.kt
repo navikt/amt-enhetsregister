@@ -7,11 +7,13 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
-import org.mockito.Mockito.*
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 
@@ -30,15 +32,13 @@ class EnhetControllerTest {
 
 		@AfterAll
 		@JvmStatic
-		fun cleanup() {
-			server.shutdown()
-		}
+		fun cleanup() = server.shutdown()
 	}
 
 	@Autowired
 	private lateinit var mockMvc: MockMvc
 
-	@MockBean
+	@MockitoBean
 	private lateinit var enhetService: EnhetService
 
 	@Test

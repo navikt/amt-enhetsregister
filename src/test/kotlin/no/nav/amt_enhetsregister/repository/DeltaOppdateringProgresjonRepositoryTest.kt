@@ -1,27 +1,20 @@
 package no.nav.amt_enhetsregister.repository
 
 import no.nav.amt_enhetsregister.repository.type.EnhetType
-import no.nav.amt_enhetsregister.test_utils.DatabaseTestUtils
-import no.nav.amt_enhetsregister.test_utils.SingletonPostgresContainer
+import no.nav.amt_enhetsregister.test_utils.DatabaseTestUtils.cleanAndInitDatabase
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.boot.test.context.SpringBootTest
 
-class DeltaOppdateringProgresjonRepositoryTest {
 
-	private val dataSource = SingletonPostgresContainer.getDataSource()
-
-	lateinit var jdbcTemplate: JdbcTemplate
-
-	lateinit var deltaOppdateringProgresjonRepository: DeltaOppdateringProgresjonRepository
+@SpringBootTest(classes = [DeltaOppdateringProgresjonRepository::class])
+class DeltaOppdateringProgresjonRepositoryTest(
+	private val deltaOppdateringProgresjonRepository: DeltaOppdateringProgresjonRepository
+) : RepositoryTestBase() {
 
 	@BeforeEach
-	fun migrate() {
-		jdbcTemplate = JdbcTemplate(dataSource)
-		deltaOppdateringProgresjonRepository = DeltaOppdateringProgresjonRepository(jdbcTemplate)
-		DatabaseTestUtils.cleanAndInitDatabase(dataSource,"/db/delta-enhet-oppdatering.sql")
-	}
+	fun setUp() = cleanAndInitDatabase(dataSource,"/db/delta-enhet-oppdatering.sql")
 
 	@Test
 	fun `hentOppdateringProgresjon skal hente oppdatering progresjon for moderenhet`() {
