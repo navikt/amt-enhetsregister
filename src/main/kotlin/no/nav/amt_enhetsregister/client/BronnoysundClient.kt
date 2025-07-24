@@ -5,7 +5,9 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import java.time.ZonedDateTime
 import java.util.zip.GZIPInputStream
@@ -20,7 +22,7 @@ class BronnoysundClient(
 	fun hentModerenhetOppdateringer(fraOppdateringId: Int, size: Int): List<EnhetOppdatering> {
 		val request = Request.Builder()
 			.url("$bronnoysundUrl/enhetsregisteret/api/oppdateringer/enheter?oppdateringsid=$fraOppdateringId&size=$size")
-			.header("Accept", "application/json")
+			.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
 			.get()
 			.build()
 
@@ -49,7 +51,7 @@ class BronnoysundClient(
 	fun hentUnderenhetOppdateringer(fraOppdateringId: Int, size: Int): List<EnhetOppdatering> {
 		val request = Request.Builder()
 			.url("$bronnoysundUrl/enhetsregisteret/api/oppdateringer/underenheter?oppdateringsid=$fraOppdateringId&size=$size")
-			.header("Accept", "application/json")
+			.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
 			.get()
 			.build()
 
@@ -78,7 +80,7 @@ class BronnoysundClient(
 	fun hentModerenhet(organisasjonsnummer: String): Moderenhet? {
 		val request = Request.Builder()
 			.url("$bronnoysundUrl/enhetsregisteret/api/enheter/$organisasjonsnummer")
-			.header("Accept", "application/json")
+			.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
 			.get()
 			.build()
 
@@ -104,7 +106,7 @@ class BronnoysundClient(
 	fun hentUnderenhet(organisasjonsnummer: String): Underenhet? {
 		val request = Request.Builder()
 			.url("$bronnoysundUrl/enhetsregisteret/api/underenheter/$organisasjonsnummer")
-			.header("Accept", "application/json")
+			.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
 			.get()
 			.build()
 
