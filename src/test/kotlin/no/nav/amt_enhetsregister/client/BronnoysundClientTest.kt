@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.amt_enhetsregister.test_utils.ResourceUtils
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -35,6 +36,9 @@ class BronnoysundClientTest {
 			objectMapper = objectMapper,
 		)
 	}
+
+	@AfterEach
+	fun teardown() = server.shutdown()
 
 	@Test
 	fun `hentModerenhet skal lage riktig request og parse response`() {
