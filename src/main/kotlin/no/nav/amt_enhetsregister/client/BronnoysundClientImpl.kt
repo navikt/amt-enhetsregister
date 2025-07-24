@@ -1,6 +1,7 @@
 package no.nav.amt_enhetsregister.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.amt_enhetsregister.utils.JsonUtils.getObjectMapper
 import no.nav.amt_enhetsregister.utils.JsonUtils.listCollectionType
 import okhttp3.OkHttpClient
@@ -31,9 +32,7 @@ class BronnoysundClientImpl(
 				throw RuntimeException("Klarte ikke å hente moderenhet oppdateringer. Status: ${response.code}")
 			}
 
-			val body = response.body?.string() ?: throw RuntimeException("Body is missing")
-
-			val oppdateringer = objectMapper.readValue(body, HentModerenhetOppdateringerResponse::class.java)
+			val oppdateringer = objectMapper.readValue<HentModerenhetOppdateringerResponse>(response.body.string())
 
 			if (oppdateringer._embedded == null) {
 				return emptyList()
@@ -62,9 +61,7 @@ class BronnoysundClientImpl(
 				throw RuntimeException("Klarte ikke å hente underenhet oppdateringer. Status: ${response.code}")
 			}
 
-			val body = response.body?.string() ?: throw RuntimeException("Body is missing")
-
-			val oppdateringer = objectMapper.readValue(body, HentUnderenhetOppdateringerResponse::class.java)
+			val oppdateringer = objectMapper.readValue<HentUnderenhetOppdateringerResponse>(response.body.string())
 
 			if (oppdateringer._embedded == null) {
 				return emptyList()
@@ -97,9 +94,7 @@ class BronnoysundClientImpl(
 				throw RuntimeException("Klarte ikke å hente moderenhet for orgnummer $organisasjonsnummer. Status: ${response.code}")
 			}
 
-			val body = response.body?.string() ?: throw RuntimeException("Body is missing")
-
-			val moderenhetResponse = objectMapper.readValue(body, HentModerenhetResponse::class.java)
+			val moderenhetResponse = objectMapper.readValue<HentModerenhetResponse>(response.body.string())
 
 			return Moderenhet(
 				organisasjonsnummer = moderenhetResponse.organisasjonsnummer,
@@ -125,9 +120,7 @@ class BronnoysundClientImpl(
 				throw RuntimeException("Klarte ikke å hente underenhet for orgnummer $organisasjonsnummer. Status: ${response.code}")
 			}
 
-			val body = response.body?.string() ?: throw RuntimeException("Body is missing")
-
-			val underenhetResponse = objectMapper.readValue(body, HentUnderenhetResponse::class.java)
+			val underenhetResponse = objectMapper.readValue<HentUnderenhetResponse>(response.body.string())
 
 			return Underenhet(
 				organisasjonsnummer = underenhetResponse.organisasjonsnummer,
@@ -150,9 +143,7 @@ class BronnoysundClientImpl(
 				throw RuntimeException("Klarte ikke å laste ned moderenheter. Status: ${response.code}")
 			}
 
-			val bodyStream = response.body?.byteStream() ?: throw RuntimeException("Body is missing")
-
-			val stream = GZIPInputStream(bodyStream)
+			val stream = GZIPInputStream(response.body.byteStream())
 
 			return objectMapper.readValue(stream, listCollectionType(Moderenhet::class.java))
 		}
@@ -170,9 +161,7 @@ class BronnoysundClientImpl(
 				throw RuntimeException("Klarte ikke å laste ned underenheter. Status: ${response.code}")
 			}
 
-			val bodyStream = response.body?.byteStream() ?: throw RuntimeException("Body is missing")
-
-			val stream = GZIPInputStream(bodyStream)
+			val stream = GZIPInputStream(response.body.byteStream())
 
 			return objectMapper.readValue(stream, listCollectionType(Underenhet::class.java))
 		}
