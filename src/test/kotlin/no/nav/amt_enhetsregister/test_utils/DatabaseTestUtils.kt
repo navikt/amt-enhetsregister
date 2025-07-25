@@ -1,5 +1,6 @@
 package no.nav.amt_enhetsregister.test_utils
 
+import org.springframework.core.io.ClassPathResource
 import org.springframework.jdbc.core.JdbcTemplate
 import javax.sql.DataSource
 
@@ -15,15 +16,15 @@ object DatabaseTestUtils {
 	}
 
 	fun runScriptFile(dataSource: DataSource, scriptFilePath: String) {
-		val script = this::class.java.getResource(scriptFilePath).readText()
+		val script = ClassPathResource(scriptFilePath).file.readText()
 		runScript(dataSource, script)
 	}
 
 	fun cleanDatabase(dataSource: DataSource) {
 		val jdbcTemplate = JdbcTemplate(dataSource)
-		val tables = getAllTables(jdbcTemplate, SCHEMA).filter { it != FLYWAY_SCHEMA_HISTORY_TABLE_NAME }
+		val tables = getAllTables(jdbcTemplate).filter { it != FLYWAY_SCHEMA_HISTORY_TABLE_NAME }
 
-		val sequences = getAllSequences(jdbcTemplate, SCHEMA)
+		val sequences = getAllSequences(jdbcTemplate)
 
 		tables.forEach {
 			jdbcTemplate.update("TRUNCATE TABLE $it CASCADE")
@@ -39,15 +40,15 @@ object DatabaseTestUtils {
 		runScriptFile(dataSource, scriptFilePath)
 	}
 
-	private fun getAllTables(jdbcTemplate: JdbcTemplate, schema: String): List<String> {
+	private fun getAllTables(jdbcTemplate: JdbcTemplate): List<String> {
 		val sql = "SELECT table_name FROM information_schema.tables WHERE table_schema = ?"
 
-		return jdbcTemplate.query(sql, { rs, _ -> rs.getString(1) }, schema)
+		return jdbcTemplate.query(sql, { rs, _ -> rs.getString(1) }, SCHEMA)
 	}
 
-	private fun getAllSequences(jdbcTemplate: JdbcTemplate, schema: String): List<String> {
+	private fun getAllSequences(jdbcTemplate: JdbcTemplate): List<String> {
 		val sql = "SELECT sequence_name FROM information_schema.sequences WHERE sequence_schema = ?"
 
-		return jdbcTemplate.query(sql, { rs, _ -> rs.getString(1) }, schema)
+		return jdbcTemplate.query(sql, { rs, _ -> rs.getString(1) }, SCHEMA)
 	}
 }

@@ -1,17 +1,12 @@
 package no.nav.amt_enhetsregister.config
 
 import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider
-import no.nav.amt_enhetsregister.client.BronnoysundClient
-import no.nav.amt_enhetsregister.client.BronnoysundClientImpl
-import no.nav.common.job.leader_election.LeaderElectionClient
 import no.nav.common.job.leader_election.ShedLockLeaderElectionClient
 import no.nav.common.rest.filter.LogRequestFilter
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
-import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Profile
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.scheduling.annotation.EnableScheduling
 
@@ -30,14 +25,6 @@ class ApplicationConfig {
 	}
 
 	@Bean
-	fun leaderElectionClient(jdbcTemplate: JdbcTemplate): LeaderElectionClient {
-		return ShedLockLeaderElectionClient(JdbcTemplateLockProvider(jdbcTemplate))
-	}
-
-	@Profile("default")
-	@Bean
-	fun bronnoysundClient(): BronnoysundClient {
-		return BronnoysundClientImpl()
-	}
-
+	fun leaderElectionClient(jdbcTemplate: JdbcTemplate) =
+		ShedLockLeaderElectionClient(JdbcTemplateLockProvider(jdbcTemplate))
 }

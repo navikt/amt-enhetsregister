@@ -15,15 +15,14 @@ class EnhetService(
 	private val bronnoysundClient: BronnoysundClient,
 	private val kafkaProducerService: KafkaProducerService,
 	private val transactionTemplate: TransactionTemplate,
-	) {
-
+) {
 	private val log = LoggerFactory.getLogger(this::class.java)
 
-	private val SLETTET_SUFFIX=" (slettet)"
-	private val EMPTY_STRING=""
-
 	fun hentEnhet(organisasjonsnummer: String): EnhetMedOverordnetEnhet? {
-		val enhet = enhetRepository.hentEnhet(organisasjonsnummer) ?: return fallbackTilBronnoysundOgOppdaterEnhetHvisMangler(organisasjonsnummer)
+		val enhet =
+			enhetRepository.hentEnhet(organisasjonsnummer) ?: return fallbackTilBronnoysundOgOppdaterEnhetHvisMangler(
+				organisasjonsnummer
+			)
 
 		val overordnetEnhetNavn = enhet.overordnetEnhet?.let { enhetRepository.hentEnhet(it)?.navn }
 
@@ -38,13 +37,16 @@ class EnhetService(
 	fun fallbackTilBronnoysundOgOppdaterEnhetHvisMangler(organisasjonsnummer: String): EnhetMedOverordnetEnhet? {
 		val underEnhet = bronnoysundClient.hentUnderenhet(organisasjonsnummer)
 		if (underEnhet != null) {
-			log.info("Fant manglende underenhet orgnr=${organisasjonsnummer} i brreg : ${underEnhet} ")
+			log.info("Fant manglende underenhet orgnr=${organisasjonsnummer} i brreg : $underEnhet ")
 			oppdaterEnheter(
-				listOf( UpsertEnhet(
-				organisasjonsnummer = organisasjonsnummer,
-				navn = "${underEnhet.navn}${if (underEnhet.slettedato == null) SLETTET_SUFFIX else EMPTY_STRING}",
-				overordnetEnhetOrgNr = underEnhet.overordnetEnhet
-			)))
+				listOf(
+					UpsertEnhet(
+						organisasjonsnummer = organisasjonsnummer,
+						navn = "${underEnhet.navn}${if (underEnhet.slettedato == null) SLETTET_SUFFIX else EMPTY_STRING}",
+						overordnetEnhetOrgNr = underEnhet.overordnetEnhet
+					)
+				)
+			)
 			if (underEnhet.overordnetEnhet != null) {
 				val moderEnhet = hentEnhet(underEnhet.overordnetEnhet)
 				if (moderEnhet != null) {
@@ -66,14 +68,17 @@ class EnhetService(
 		}
 		val moderEnhet = bronnoysundClient.hentModerenhet(organisasjonsnummer)
 		if (moderEnhet != null) {
-			log.info("Fant manglende moderenhet orgnr=${organisasjonsnummer} i brreg : ${moderEnhet} ")
+			log.info("Fant manglende moderenhet orgnr=${organisasjonsnummer} i brreg : $moderEnhet ")
 
 			oppdaterEnheter(
-				listOf( UpsertEnhet(
-					organisasjonsnummer = organisasjonsnummer,
-					navn = "${moderEnhet.navn}${if (moderEnhet.slettedato != null) SLETTET_SUFFIX else EMPTY_STRING}",
-					overordnetEnhetOrgNr = null
-				)))
+				listOf(
+					UpsertEnhet(
+						organisasjonsnummer = organisasjonsnummer,
+						navn = "${moderEnhet.navn}${if (moderEnhet.slettedato != null) SLETTET_SUFFIX else EMPTY_STRING}",
+						overordnetEnhetOrgNr = null
+					)
+				)
+			)
 			return EnhetMedOverordnetEnhet(
 				organisasjonsnummer = organisasjonsnummer,
 				navn = moderEnhet.navn,
@@ -118,4 +123,8 @@ class EnhetService(
 		val overordnetEnhetNavn: String? = null
 	)
 
+	companion object {
+		private const val SLETTET_SUFFIX = " (slettet)"
+		private const val EMPTY_STRING = ""
+	}
 }
