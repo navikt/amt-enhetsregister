@@ -1,5 +1,6 @@
 package no.nav.amt_enhetsregister.test_utils
 
+import org.springframework.core.io.ClassPathResource
 import org.springframework.jdbc.core.JdbcTemplate
 import javax.sql.DataSource
 
@@ -15,7 +16,7 @@ object DatabaseTestUtils {
 	}
 
 	fun runScriptFile(dataSource: DataSource, scriptFilePath: String) {
-		val script = this::class.java.getResource(scriptFilePath).readText()
+		val script = ClassPathResource(scriptFilePath).file.readText()
 		runScript(dataSource, script)
 	}
 
