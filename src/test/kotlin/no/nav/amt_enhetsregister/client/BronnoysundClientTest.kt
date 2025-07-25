@@ -309,7 +309,7 @@ class BronnoysundClientTest {
 		}
 
 		@Test
-		fun `hentAlleUnderenheter skal returnere liste med moderenheter`() {
+		fun `hentAlleUnderenheter skal returnere liste med underenheter`() {
 			val expected = listOf(Underenhet("~organisasjonsnummer~", "~navn~", null, null))
 			enqueueByteArray(objectMapper.writeValueAsBytes(expected))
 
