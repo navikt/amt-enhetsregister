@@ -1,5 +1,6 @@
 package no.nav.amt_enhetsregister.client
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.OkHttpClient
@@ -33,11 +34,11 @@ class BronnoysundClient(
 
 			val oppdateringer = objectMapper.readValue<HentModerenhetOppdateringerResponse>(response.body.string())
 
-			if (oppdateringer._embedded == null) {
+			if (oppdateringer.embedded == null) {
 				return emptyList()
 			}
 
-			return oppdateringer._embedded.oppdaterteEnheter.map {
+			return oppdateringer.embedded.oppdaterteEnheter.map {
 				EnhetOppdatering(
 					oppdateringId = it.oppdateringsid,
 					organisasjonsnummer = it.organisasjonsnummer,
@@ -62,11 +63,11 @@ class BronnoysundClient(
 
 			val oppdateringer = objectMapper.readValue<HentUnderenhetOppdateringerResponse>(response.body.string())
 
-			if (oppdateringer._embedded == null) {
+			if (oppdateringer.embedded == null) {
 				return emptyList()
 			}
 
-			return oppdateringer._embedded.oppdaterteUnderenheter.map {
+			return oppdateringer.embedded.oppdaterteUnderenheter.map {
 				EnhetOppdatering(
 					oppdateringId = it.oppdateringsid,
 					organisasjonsnummer = it.organisasjonsnummer,
@@ -133,7 +134,7 @@ class BronnoysundClient(
 	fun hentAlleModerenheter(): List<Moderenhet> {
 		val request = Request.Builder()
 			.url("$bronnoysundUrl/enhetsregisteret/api/enheter/lastned")
-			.header("Accept", "application/vnd.brreg.enhetsregisteret.enhet.v1+gzip;charset=UTF-8")
+			.header(HttpHeaders.ACCEPT, "application/vnd.brreg.enhetsregisteret.enhet.v1+gzip;charset=UTF-8")
 			.get()
 			.build()
 
@@ -151,7 +152,7 @@ class BronnoysundClient(
 	fun hentAlleUnderenheter(): List<Underenhet> {
 		val request = Request.Builder()
 			.url("$bronnoysundUrl/enhetsregisteret/api/underenheter/lastned")
-			.header("Accept", "application/vnd.brreg.enhetsregisteret.underenhet.v1+gzip;charset=UTF-8")
+			.header(HttpHeaders.ACCEPT, "application/vnd.brreg.enhetsregisteret.underenhet.v1+gzip;charset=UTF-8")
 			.get()
 			.build()
 
@@ -166,8 +167,8 @@ class BronnoysundClient(
 		}
 	}
 
-	private fun mapTilEnhetOppdateringType(str: String): EnhetOppdateringType {
-		return when (str) {
+	companion object {
+		fun mapTilEnhetOppdateringType(str: String): EnhetOppdateringType = when (str) {
 			"Ny" -> EnhetOppdateringType.NY
 			"Ukjent" -> EnhetOppdateringType.UKJENT
 			"Fjernet" -> EnhetOppdateringType.FJERNET
@@ -191,8 +192,8 @@ private data class HentUnderenhetResponse(
 	val overordnetEnhet: String? // Underenheter som ikke har "overordnetEnhet" er slettet
 )
 
-private data class HentModerenhetOppdateringerResponse(
-	val _embedded: Embedded?,
+data class HentModerenhetOppdateringerResponse(
+	@field:JsonProperty("_embedded") val embedded: Embedded?,
 ) {
 	data class Embedded(
 		val oppdaterteEnheter: List<EnhetOppdatering>
@@ -206,8 +207,8 @@ private data class HentModerenhetOppdateringerResponse(
 	}
 }
 
-private data class HentUnderenhetOppdateringerResponse(
-	val _embedded: Embedded?,
+data class HentUnderenhetOppdateringerResponse(
+	@field:JsonProperty("_embedded") val embedded: Embedded?,
 ) {
 	data class Embedded(
 		val oppdaterteUnderenheter: List<EnhetOppdatering>
