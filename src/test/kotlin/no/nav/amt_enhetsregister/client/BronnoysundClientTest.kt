@@ -57,9 +57,7 @@ class BronnoysundClientTest {
 
 		@Test
 		fun `hentModerenhet skal lage riktig request og parse response`() {
-			val responseBody = ClassPathResource("/client/hent-moderenhet-response.json").file.readText()
-
-			server.enqueue(MockResponse().setBody(responseBody))
+			enqueueResourceFile("client/hent-moderenhet-response.json")
 
 			val moderenhet = client.hentModerenhet("998877443")
 
@@ -74,21 +72,21 @@ class BronnoysundClientTest {
 
 		@Test
 		fun `hentModerenhet skal returnere null for status 410 GONE`() {
-			server.enqueue(MockResponse().setResponseCode(HttpStatus.GONE.value()))
+			enqueueHttpStatus(HttpStatus.GONE)
 
 			assertNull(client.hentModerenhet("12345678"))
 		}
 
 		@Test
 		fun `hentModerenhet skal returnere null for status 404 NOT_FOUND`() {
-			server.enqueue(MockResponse().setResponseCode(HttpStatus.NOT_FOUND.value()))
+			enqueueHttpStatus(HttpStatus.NOT_FOUND)
 
 			assertNull(client.hentModerenhet("12345678"))
 		}
 
 		@Test
 		fun `hentModerenhet skal kaste feil for status 500 INTERNAL_SERVER_ERROR`() {
-			server.enqueue(MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+			enqueueHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 
 			val thrown = assertThrows<RuntimeException> {
 				client.hentModerenhet("12345678")
@@ -103,9 +101,7 @@ class BronnoysundClientTest {
 
 		@Test
 		fun `hentUnderenhet skal lage riktig request og parse response`() {
-			val responseBody = ClassPathResource("/client/hent-underenhet-response.json").file.readText()
-
-			server.enqueue(MockResponse().setBody(responseBody))
+			enqueueResourceFile("client/hent-underenhet-response.json")
 
 			val underenhet = client.hentUnderenhet("12345678")
 
@@ -121,21 +117,21 @@ class BronnoysundClientTest {
 
 		@Test
 		fun `hentUnderenhet skal returnere null for status 410 GONE`() {
-			server.enqueue(MockResponse().setResponseCode(HttpStatus.GONE.value()))
+			enqueueHttpStatus(HttpStatus.GONE)
 
 			assertNull(client.hentUnderenhet("12345678"))
 		}
 
 		@Test
 		fun `hentUnderenhet skal returnere null for status 404 NOT_FOUND`() {
-			server.enqueue(MockResponse().setResponseCode(HttpStatus.NOT_FOUND.value()))
+			enqueueHttpStatus(HttpStatus.NOT_FOUND)
 
 			assertNull(client.hentUnderenhet("12345678"))
 		}
 
 		@Test
 		fun `hentUnderenhet skal kaste feil for status 500 INTERNAL_SERVER_ERROR`() {
-			server.enqueue(MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+			enqueueHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 
 			val thrown = assertThrows<RuntimeException> {
 				client.hentUnderenhet("12345678")
@@ -147,12 +143,9 @@ class BronnoysundClientTest {
 
 	@Nested
 	inner class HentModerenhetOppdateringer {
-		private val responseBody =
-			ClassPathResource("/client/hent-moderenhet-oppdateringer-response.json").file.readText()
-
 		@Test
 		fun `hentModerenhetOppdateringer skal kaste feil for status 410 GONE`() {
-			server.enqueue(MockResponse().setResponseCode(HttpStatus.GONE.value()))
+			enqueueHttpStatus(HttpStatus.GONE)
 
 			val thrown = assertThrows<RuntimeException> {
 				client.hentModerenhetOppdateringer(fraOppdateringId = 10, size = 100)
@@ -164,9 +157,7 @@ class BronnoysundClientTest {
 		@Test
 		fun `hentModerenhetOppdateringer skal returnere tom liste hvis _embedded mangler`() {
 			server.enqueue(
-				MockResponse().setBody(
-					objectMapper.writeValueAsString(HentModerenhetOppdateringerResponse(null))
-				)
+				MockResponse().setBody(objectMapper.writeValueAsString(HentModerenhetOppdateringerResponse(null)))
 			)
 
 			val enhetOppdateringer = client.hentModerenhetOppdateringer(fraOppdateringId = 10, size = 100)
@@ -176,7 +167,7 @@ class BronnoysundClientTest {
 
 		@Test
 		fun `hentModerenhetOppdateringer skal lage riktig request og parse response`() {
-			server.enqueue(MockResponse().setBody(responseBody))
+			enqueueResourceFile("client/hent-moderenhet-oppdateringer-response.json")
 
 			val oppdateringer = client.hentModerenhetOppdateringer(10, 100)
 
@@ -208,12 +199,10 @@ class BronnoysundClientTest {
 
 	@Nested
 	inner class HentUnderenhetOppdateringer {
-		private val responseBody =
-			ClassPathResource("/client/hent-underenhet-oppdateringer-response.json").file.readText()
 
 		@Test
 		fun `hentUnderenhetOppdateringer skal kaste feil for status 410 GONE`() {
-			server.enqueue(MockResponse().setResponseCode(HttpStatus.GONE.value()))
+			enqueueHttpStatus(HttpStatus.GONE)
 
 			val thrown = assertThrows<RuntimeException> {
 				client.hentUnderenhetOppdateringer(fraOppdateringId = 10, size = 100)
@@ -225,13 +214,7 @@ class BronnoysundClientTest {
 		@Test
 		fun `hentUnderenhetOppdateringer skal returnere tom liste hvis _embedded mangler`() {
 			server.enqueue(
-				MockResponse().setBody(
-					objectMapper.writeValueAsString(
-						HentUnderenhetOppdateringerResponse(
-							null
-						)
-					)
-				)
+				MockResponse().setBody(objectMapper.writeValueAsString(HentUnderenhetOppdateringerResponse(null)))
 			)
 
 			val enhetOppdateringer = client.hentUnderenhetOppdateringer(fraOppdateringId = 10, size = 100)
@@ -241,7 +224,7 @@ class BronnoysundClientTest {
 
 		@Test
 		fun `hentUnderenhetOppdateringer skal lage riktig request og parse response`() {
-			server.enqueue(MockResponse().setBody(responseBody))
+			enqueueResourceFile("client/hent-underenhet-oppdateringer-response.json")
 
 			val oppdateringer = client.hentUnderenhetOppdateringer(10, 100)
 
@@ -275,7 +258,7 @@ class BronnoysundClientTest {
 	inner class HentAlleModerenheter {
 		@Test
 		fun `hentAlleModerenheter skal kaste feil for status 410 GONE`() {
-			server.enqueue(MockResponse().setResponseCode(HttpStatus.GONE.value()))
+			enqueueHttpStatus(HttpStatus.GONE)
 
 			val thrown = assertThrows<RuntimeException> {
 				client.hentAlleModerenheter()
@@ -299,7 +282,7 @@ class BronnoysundClientTest {
 	inner class HentAlleUnderenheter {
 		@Test
 		fun `hentAlleUnderenheter skal kaste feil for status 410 GONE`() {
-			server.enqueue(MockResponse().setResponseCode(HttpStatus.GONE.value()))
+			enqueueHttpStatus(HttpStatus.GONE)
 
 			val thrown = assertThrows<RuntimeException> {
 				client.hentAlleUnderenheter()
@@ -337,6 +320,12 @@ class BronnoysundClientTest {
 			assertEquals("Ukjent EnhetOppdateringType: ~unknown~", thrown.message)
 		}
 	}
+
+	private fun enqueueResourceFile(filename: String) =
+		server.enqueue(MockResponse().setBody(ClassPathResource(filename).file.readText()))
+
+	private fun enqueueHttpStatus(httpStatus: HttpStatus) =
+		server.enqueue(MockResponse().setResponseCode(httpStatus.value()))
 
 	private fun enqueueByteArray(bytes: ByteArray) {
 		val gzippedBody = ByteArrayOutputStream().use { byteStream ->
