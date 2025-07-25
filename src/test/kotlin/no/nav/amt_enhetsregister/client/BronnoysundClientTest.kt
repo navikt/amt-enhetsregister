@@ -1,7 +1,6 @@
 package no.nav.amt_enhetsregister.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import no.nav.amt_enhetsregister.test_utils.ResourceUtils
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
+import org.springframework.core.io.ClassPathResource
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -42,7 +42,7 @@ class BronnoysundClientTest {
 
 	@Test
 	fun `hentModerenhet skal lage riktig request og parse response`() {
-		val responseBody = ResourceUtils.getResourceAsText("/client/hent-moderenhet-response.json")
+		val responseBody = ClassPathResource("/client/hent-moderenhet-response.json").file.readText()
 
 		server.enqueue(MockResponse().setBody(responseBody))
 
@@ -66,7 +66,7 @@ class BronnoysundClientTest {
 
 	@Test
 	fun `hentUnderenhet skal lage riktig request og parse response`() {
-		val responseBody = ResourceUtils.getResourceAsText("/client/hent-underenhet-response.json")
+		val responseBody = ClassPathResource("/client/hent-underenhet-response.json").file.readText()
 
 		server.enqueue(MockResponse().setBody(responseBody))
 
@@ -91,7 +91,7 @@ class BronnoysundClientTest {
 
 	@Test
 	fun `hentModerenhetOppdateringer skal lage riktig request og parse response`() {
-		val responseBody = ResourceUtils.getResourceAsText("/client/hent-moderenhet-oppdateringer-response.json")
+		val responseBody = ClassPathResource("/client/hent-moderenhet-oppdateringer-response.json").file.readText()
 
 		server.enqueue(MockResponse().setBody(responseBody))
 
@@ -124,7 +124,7 @@ class BronnoysundClientTest {
 
 	@Test
 	fun `hentUnderenhetOppdateringer skal lage riktig request og parse response`() {
-		val responseBody = ResourceUtils.getResourceAsText("/client/hent-underenhet-oppdateringer-response.json")
+		val responseBody = ClassPathResource("/client/hent-underenhet-oppdateringer-response.json").file.readText()
 
 		server.enqueue(MockResponse().setBody(responseBody))
 
