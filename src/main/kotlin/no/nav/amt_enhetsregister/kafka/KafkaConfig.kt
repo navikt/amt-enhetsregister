@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import java.util.*
+import java.util.Properties
 
 @Configuration
 @EnableConfigurationProperties(KafkaTopicProperties::class)
@@ -15,7 +15,7 @@ class KafkaConfig {
 
 	@Bean
 	@Profile("default")
-	open fun kafkaConsumerProperties(): KafkaProperties {
+	fun kafkaConsumerProperties(): KafkaProperties {
 
 		return object : KafkaProperties {
 			override fun consumer(): Properties {
@@ -29,7 +29,7 @@ class KafkaConfig {
 	}
 
 	@Bean
-	open fun kafkaProducer(kafkaProperties: KafkaProperties): KafkaProducerClient<ByteArray, ByteArray> {
+	fun kafkaProducer(kafkaProperties: KafkaProperties): KafkaProducerClient<ByteArray, ByteArray> {
 		return KafkaProducerClientImpl(kafkaProperties.producer())
 	}
 

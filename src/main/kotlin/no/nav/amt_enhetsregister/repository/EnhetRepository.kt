@@ -2,13 +2,10 @@ package no.nav.amt_enhetsregister.repository
 
 import no.nav.amt_enhetsregister.repository.type.Enhet
 import no.nav.amt_enhetsregister.repository.type.UpsertEnhetCmd
-import org.springframework.jdbc.core.BatchPreparedStatementSetter
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
-import java.sql.PreparedStatement
 
 @Repository
 class EnhetRepository(
