@@ -13,7 +13,7 @@ import java.time.Year
 class ObjectMapperTest {
 
 	@Autowired
-	lateinit var objectMapper: ObjectMapper
+	private lateinit var objectMapper: ObjectMapper
 
 	@Test
 	fun `skal serialisere og deserialisere LocalDateTime`() {
@@ -36,7 +36,7 @@ class ObjectMapperTest {
 
 	companion object {
 		private val currentYear = Year.now().value
-		val now: LocalDateTime = LocalDateTime.of(currentYear, 12, 25, 10, 30)
+		private val now: LocalDateTime = LocalDateTime.of(currentYear, 12, 25, 10, 30)
 
 		private val jsonWithUnknownPropertyInTest = """{
 			"name": "~name~",
