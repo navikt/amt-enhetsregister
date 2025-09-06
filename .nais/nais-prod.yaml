@@ -21,8 +21,8 @@ spec:
     initialDelay: 50
     timeout: 3
   replicas:
-    min: 1
-    max: 2
+    min: 0
+    max: 0
     scalingStrategy:
       cpu:
         thresholdPercentage: 500
@@ -60,7 +60,7 @@ spec:
   gcp:
     sqlInstances:
       - name: amt-enhetsregister-v1
-        type: POSTGRES_14
+        type: POSTGRES_17
         tier: db-custom-1-3840
         diskAutoresize: true
         databases:
