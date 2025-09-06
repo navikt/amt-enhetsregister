@@ -18,7 +18,7 @@ abstract class RepositoryTestBase {
 	protected lateinit var dataSource: DataSource
 
 	companion object {
-		private const val POSTGRES_DOCKER_IMAGE_NAME = "postgres:14-alpine"
+		private const val POSTGRES_DOCKER_IMAGE_NAME = "postgres:17-alpine"
 
 		@ServiceConnection
 		@Suppress("unused")
