@@ -25,7 +25,7 @@ val shedlockVersion = "6.10.0"
 val tokenSupportVersion = "5.0.34"
 val okHttpVersion = "5.1.0"
 val mockOauth2ServerVersion = "3.0.0"
-val mockkVersion = "1.14.5"
+val mockkVersion = "1.14.6"
 
 dependencyManagement {
     imports {
