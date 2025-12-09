@@ -53,7 +53,8 @@ spec:
   kafka:
     pool: nav-prod
   env:
-    # Kafka topics
+    - name: JDK_JAVA_OPTIONS
+      value: "-XX:MaxRAMPercentage=70.0"
     - name: VIRKSOMHETER_TOPIC
       value: amt.virksomheter-v1
 
