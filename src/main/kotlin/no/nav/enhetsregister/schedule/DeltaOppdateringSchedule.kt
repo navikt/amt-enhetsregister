@@ -3,9 +3,11 @@ package no.nav.enhetsregister.schedule
 import no.nav.common.job.JobRunner
 import no.nav.common.job.leader_election.LeaderElectionClient
 import no.nav.enhetsregister.service.DeltaOppdateringEnhetService
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
+@ConditionalOnProperty("feature.toggle.enhetsregister", havingValue = "true", matchIfMissing = false)
 @Component
 class DeltaOppdateringSchedule(
 	private val leaderElectionClient: LeaderElectionClient,
