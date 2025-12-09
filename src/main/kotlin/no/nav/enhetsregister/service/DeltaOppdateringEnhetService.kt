@@ -13,7 +13,6 @@ class DeltaOppdateringEnhetService(
 	private val deltaOppdateringRepository: DeltaOppdateringProgresjonRepository,
 	private val bronnoysundClient: BronnoysundClient
 ) {
-
 	companion object {
 		const val OPPDATERINGER_SIZE = 500
 	}
@@ -34,7 +33,7 @@ class DeltaOppdateringEnhetService(
 				)
 			}
 
-			if ( moderenhet.slettedato != null) {
+			if (moderenhet.slettedato != null) {
 				log.info("Moderenhet orgnr=${it.organisasjonsnummer} er slettet fra brreg")
 
 				return@deltaOppdaterEnhet EnhetService.UpsertEnhet(
@@ -58,7 +57,8 @@ class DeltaOppdateringEnhetService(
 
 			if (underenhet == null) { // GONE
 				log.info("Underenhet orgnr=${it.organisasjonsnummer} er fjernet fra brreg")
-				val opprinneligOverordnetEnhet = enhetService.hentEnhet(it.organisasjonsnummer)?.overordnetEnhetOrganisasjonsnummer
+				val opprinneligOverordnetEnhet =
+					enhetService.hentEnhet(it.organisasjonsnummer)?.overordnetEnhetOrganisasjonsnummer
 
 				return@deltaOppdaterEnhet EnhetService.UpsertEnhet(
 					organisasjonsnummer = it.organisasjonsnummer,
@@ -69,7 +69,8 @@ class DeltaOppdateringEnhetService(
 
 			if (underenhet.slettedato != null) {
 				log.info("Underenhet orgnr=${it.organisasjonsnummer} er slettet fra brreg")
-				val opprinneligOverordnetEnhet = enhetService.hentEnhet(it.organisasjonsnummer)?.overordnetEnhetOrganisasjonsnummer
+				val opprinneligOverordnetEnhet =
+					enhetService.hentEnhet(it.organisasjonsnummer)?.overordnetEnhetOrganisasjonsnummer
 
 				return@deltaOppdaterEnhet EnhetService.UpsertEnhet(
 					organisasjonsnummer = it.organisasjonsnummer,
@@ -80,7 +81,8 @@ class DeltaOppdateringEnhetService(
 
 			if (underenhet.overordnetEnhet == null) {
 				log.warn("Underenhet orgnr=${underenhet.organisasjonsnummer} mangler overordnet enhet. oppdatering_id=${it.oppdateringId}")
-				val opprinneligOverordnetEnhet = enhetService.hentEnhet(it.organisasjonsnummer)?.overordnetEnhetOrganisasjonsnummer
+				val opprinneligOverordnetEnhet =
+					enhetService.hentEnhet(it.organisasjonsnummer)?.overordnetEnhetOrganisasjonsnummer
 
 				return@deltaOppdaterEnhet EnhetService.UpsertEnhet(
 					organisasjonsnummer = it.organisasjonsnummer,
@@ -97,7 +99,10 @@ class DeltaOppdateringEnhetService(
 		}
 	}
 
-	private fun deltaOppdaterEnhet(enhetType: EnhetType, mapper: (oppdatering: EnhetOppdatering) -> EnhetService.UpsertEnhet?) {
+	private fun deltaOppdaterEnhet(
+		enhetType: EnhetType,
+		mapper: (oppdatering: EnhetOppdatering) -> EnhetService.UpsertEnhet?
+	) {
 		val progresjon = deltaOppdateringRepository.hentOppdateringProgresjon(enhetType)
 
 		log.info("Starter delta oppdatering av $enhetType fra oppdatering_id=${progresjon.oppdateringId}")
@@ -127,7 +132,6 @@ class DeltaOppdateringEnhetService(
 
 		log.info("Fullførte delta oppdatering av $enhetType, sisteOppdateringId=$sisteOppdateringId")
 	}
-
 }
 
 

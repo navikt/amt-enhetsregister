@@ -1,6 +1,5 @@
 package no.nav.enhetsregister.kafka
 
-import no.nav.common.kafka.producer.KafkaProducerClient
 import no.nav.common.kafka.producer.KafkaProducerClientImpl
 import no.nav.common.kafka.util.KafkaPropertiesPreset
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -15,23 +14,15 @@ class KafkaConfig {
 
 	@Bean
 	@Profile("default")
-	fun kafkaConsumerProperties(): KafkaProperties {
+	fun kafkaConsumerProperties(): KafkaProperties = object : KafkaProperties {
+		override fun consumer(): Properties = TODO()
+			//KafkaPropertiesPreset.aivenDefaultConsumerProperties("amt-enhetsregister-v1")
 
-		return object : KafkaProperties {
-			override fun consumer(): Properties {
-				return KafkaPropertiesPreset.aivenDefaultConsumerProperties("amt-enhetsregister-v1")
-			}
-
-			override fun producer(): Properties {
-				return KafkaPropertiesPreset.aivenByteProducerProperties("amt-enhetsregister")
-			}
-		}
+		override fun producer(): Properties =
+			KafkaPropertiesPreset.aivenByteProducerProperties("amt-enhetsregister")
 	}
 
 	@Bean
-	fun kafkaProducer(kafkaProperties: KafkaProperties): KafkaProducerClient<ByteArray, ByteArray> {
-		return KafkaProducerClientImpl(kafkaProperties.producer())
-	}
-
-
+	fun kafkaProducer(kafkaProperties: KafkaProperties) =
+		KafkaProducerClientImpl<ByteArray, ByteArray>(kafkaProperties.producer())
 }

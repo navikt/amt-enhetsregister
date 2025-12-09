@@ -11,7 +11,6 @@ class OppdaterAlleEnheterService(
 	private val bronnoysundClient: BronnoysundClient,
 	private val enhetService: EnhetService,
 ) {
-
 	companion object {
 		const val CHUNCK_SIZE = 10_000
 	}
@@ -75,5 +74,4 @@ class OppdaterAlleEnheterService(
 
 		log.info("Alle underenheter er skrevet til databasen. tidBrukt=${Instant.now().epochSecond - timeStarted.epochSecond}s")
 	}
-
 }

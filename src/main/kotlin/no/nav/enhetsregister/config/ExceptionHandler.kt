@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 class ExceptionHandler {
-
 	private val log = LoggerFactory.getLogger(javaClass)
 
 	@ResponseStatus(HttpStatus.NOT_FOUND)

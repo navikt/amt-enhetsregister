@@ -1,8 +1,8 @@
 package no.nav.enhetsregister.controller
 
 import jakarta.servlet.http.HttpServletRequest
-import no.nav.enhetsregister.service.OppdaterAlleEnheterService
 import no.nav.common.job.JobRunner
+import no.nav.enhetsregister.service.OppdaterAlleEnheterService
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PostMapping
@@ -34,8 +34,5 @@ class OppdaterAlleEnheterController(private val oppdaterAlleEnheterService: Oppd
 		JobRunner.runAsync("oppdater_alle_underenheter") { oppdaterAlleEnheterService.oppdaterAlleUnderenheter() }
 	}
 
-	private fun erRequestFraLocalhost(remoteAddr: String): Boolean {
-		return remoteAddr == "127.0.0.1"
-	}
-
+	private fun erRequestFraLocalhost(remoteAddr: String): Boolean = remoteAddr == "127.0.0.1"
 }
