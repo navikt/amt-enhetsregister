@@ -4,13 +4,11 @@ import no.nav.enhetsregister.controller.dto.EnhetDto
 import no.nav.enhetsregister.controller.dto.tilDto
 import no.nav.enhetsregister.service.EnhetService
 import no.nav.security.token.support.core.api.Protected
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-@ConditionalOnProperty("feature.toggle.enhetsregister", havingValue = "true", matchIfMissing = false)
 @RestController
 @RequestMapping("/api/enhet")
 class EnhetController(private val enhetService: EnhetService) {
