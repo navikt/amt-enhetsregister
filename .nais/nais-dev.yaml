@@ -52,8 +52,6 @@ spec:
   env:
     - name: JDK_JAVA_OPTIONS
       value: "-XX:MaxRAMPercentage=70.0"
-    - name: JAVA_TOOL_OPTIONS
-      value: "-Xlog:all=debug"
     - name: VIRKSOMHETER_TOPIC
       value: amt.virksomheter-v1
 
