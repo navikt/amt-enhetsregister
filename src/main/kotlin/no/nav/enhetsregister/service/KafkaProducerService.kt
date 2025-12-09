@@ -17,6 +17,6 @@ class KafkaProducerService(
 		val key = virksomhetDto.organisasjonsnummer.toByteArray()
 		val value = objectMapper.writeValueAsBytes(virksomhetDto)
 		val record = ProducerRecord(kafkaTopicProperties.virksomheterTopic, key, value)
-		//kafkaProducerClient.sendSync(record)
+		kafkaProducerClient.sendSync(record)
 	}
 }
