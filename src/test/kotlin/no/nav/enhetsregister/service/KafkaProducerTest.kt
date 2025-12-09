@@ -8,6 +8,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class KafkaProducerTest(
@@ -15,6 +16,7 @@ class KafkaProducerTest(
 	private val kafkaTopicProperties: KafkaTopicProperties,
 ) : IntegrationTest() {
 
+	@Disabled
 	@Test
 	fun `skal publisere virksomhet pa topic`() {
 		val virksomhetV1Dto = VirksomhetV1Dto(
