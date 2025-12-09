@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.support.TransactionTemplate
 
 @Service
-
 class EnhetService(
 	private val enhetRepository: EnhetRepository,
 	private val bronnoysundClient: BronnoysundClient,
