@@ -19,13 +19,13 @@ repositories {
 }
 
 val commonVersion = "3.2025.06.23_14.50-3af3985d8555"
-val testcontainersVersion = "2.0.2"
+val testcontainersVersion = "2.0.3"
 val logstashEncoderVersion = "9.0"
-val shedlockVersion = "7.2.1"
+val shedlockVersion = "7.2.2"
 val tokenSupportVersion = "5.0.34"
 val okHttpVersion = "5.3.2"
 val mockOauth2ServerVersion = "3.0.1"
-val mockkVersion = "1.14.6"
+val mockkVersion = "1.14.7"
 
 dependencyManagement {
     imports {
