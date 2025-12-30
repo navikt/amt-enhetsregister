@@ -1,5 +1,5 @@
 plugins {
-    val kotlinVersion = "2.2.21"
+    val kotlinVersion = "2.3.0"
 
     id("org.springframework.boot") version "3.5.7"
     id("io.spring.dependency-management") version "1.1.7"
@@ -19,13 +19,13 @@ repositories {
 }
 
 val commonVersion = "3.2025.06.23_14.50-3af3985d8555"
-val testcontainersVersion = "2.0.2"
+val testcontainersVersion = "2.0.3"
 val logstashEncoderVersion = "9.0"
-val shedlockVersion = "7.2.1"
+val shedlockVersion = "7.4.0"
 val tokenSupportVersion = "5.0.34"
 val okHttpVersion = "5.3.2"
 val mockOauth2ServerVersion = "3.0.1"
-val mockkVersion = "1.14.6"
+val mockkVersion = "1.14.7"
 
 dependencyManagement {
     imports {
@@ -45,7 +45,7 @@ configurations.configureEach {
 }
 
 dependencies {
-    implementation("at.yawk.lz4:lz4-java:1.10.1") // fjernes ved neste release av org.apache.kafka:kafka-clients
+    implementation("at.yawk.lz4:lz4-java:1.10.2") // fjernes ved neste release av org.apache.kafka:kafka-clients
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
