@@ -19,7 +19,7 @@ repositories {
 }
 
 val jacksonModuleKotlinVersion = "3.0.3"
-val commonVersion = "3.2025.10.10_08.21-bb7c7830d93c"
+val commonVersion = "3.2025.11.10_14.07-a9f44944d7bc"
 val logstashEncoderVersion = "9.0"
 val shedlockVersion = "7.2.1"
 val tokenSupportVersion = "6.0.1"

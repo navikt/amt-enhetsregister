@@ -15,8 +15,10 @@ class KafkaConfig {
 	@Bean
 	@Profile("default")
 	fun kafkaConsumerProperties(): KafkaProperties = object : KafkaProperties {
-		override fun consumer(): Properties = TODO()
-			//KafkaPropertiesPreset.aivenDefaultConsumerProperties("amt-enhetsregister-v1")
+
+		// ikke i bruk
+		override fun consumer(): Properties =
+			KafkaPropertiesPreset.aivenDefaultConsumerProperties("amt-enhetsregister-v1")
 
 		override fun producer(): Properties =
 			KafkaPropertiesPreset.aivenByteProducerProperties("amt-enhetsregister")
