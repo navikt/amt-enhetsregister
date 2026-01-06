@@ -1,6 +1,6 @@
 package no.nav.enhetsregister.testutils
 
-import no.nav.enhetsregister.testutils.IntegrationTest.Companion.kafkaContainer
+import no.nav.enhetsregister.testutils.KafkaTestConfiguration.Companion.kafkaContainer
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer

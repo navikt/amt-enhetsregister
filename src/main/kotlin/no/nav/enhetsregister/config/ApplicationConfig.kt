@@ -10,13 +10,14 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.scheduling.annotation.EnableScheduling
 
-@Configuration
 @EnableScheduling
 @EnableJwtTokenValidation
+@Configuration(proxyBeanMethods = false)
 class ApplicationConfig {
 
 	@Bean
 	fun logFilterRegistrationBean() = FilterRegistrationBean<LogRequestFilter>().apply {
+		@Suppress("UsePropertyAccessSyntax")
 		setFilter(LogRequestFilter("amt-enhetsregister", false))
 		order = 1
 		addUrlPatterns("/*")

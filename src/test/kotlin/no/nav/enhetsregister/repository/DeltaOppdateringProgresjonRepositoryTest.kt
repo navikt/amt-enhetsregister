@@ -40,5 +40,4 @@ class DeltaOppdateringProgresjonRepositoryTest(
 
 		assertEquals(5, progresjon.oppdateringId)
 	}
-
 }

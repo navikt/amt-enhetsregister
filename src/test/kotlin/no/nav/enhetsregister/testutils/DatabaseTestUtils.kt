@@ -5,10 +5,8 @@ import org.springframework.jdbc.core.JdbcTemplate
 import javax.sql.DataSource
 
 object DatabaseTestUtils {
-
 	private const val SCHEMA = "public"
 	private const val FLYWAY_SCHEMA_HISTORY_TABLE_NAME = "flyway_schema_history"
-
 
 	fun runScript(dataSource: DataSource, script: String) {
 		val jdbcTemplate = JdbcTemplate(dataSource)

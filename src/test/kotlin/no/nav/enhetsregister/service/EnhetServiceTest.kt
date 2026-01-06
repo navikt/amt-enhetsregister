@@ -19,10 +19,6 @@ import org.springframework.transaction.support.TransactionTemplate
 import java.time.ZonedDateTime
 import java.util.function.Consumer
 
-private const val ORGNR_UNDERENHET = "999000000"
-
-private const val ORGNR_MODERENHET = "777000000"
-
 class EnhetServiceTest {
 	val enhetRepository: EnhetRepository = mockk()
 	val bronnoysundClient: BronnoysundClient = mockk()
@@ -34,9 +30,7 @@ class EnhetServiceTest {
 	fun setupMock() {
 		clearAllMocks()
 
-		// mock TransactionTemplate
 		val consumerSlot = slot<Consumer<TransactionStatus>>()
-
 		every {
 			transactionTemplate.executeWithoutResult(capture(consumerSlot))
 		} answers {
@@ -150,7 +144,8 @@ class EnhetServiceTest {
 		} returns Moderenhet(
 			organisasjonsnummer = ORGNR_UNDERENHET,
 			navn = "Moderenhet1",
-			slettedato = null)
+			slettedato = null
+		)
 
 		val enhet = enhetService.hentEnhet(ORGNR_UNDERENHET)
 		assertThat(enhet?.navn).isEqualTo("Underenhet1")
@@ -246,5 +241,9 @@ class EnhetServiceTest {
 		assertThat(enhet).isNull()
 	}
 
+	companion object {
+		private const val ORGNR_UNDERENHET = "999000000"
+		private const val ORGNR_MODERENHET = "777000000"
+	}
 }
 

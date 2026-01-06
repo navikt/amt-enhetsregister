@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.boot.resttestclient.TestRestTemplate
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate
+import org.springframework.boot.resttestclient.getForEntity
 import org.springframework.boot.test.web.server.LocalManagementPort
 import org.springframework.http.HttpStatus
 import org.springframework.web.util.UriComponentsBuilder
@@ -25,7 +26,7 @@ class ActuatorTest(
                 .buildAndExpand(managementPort, probeName)
                 .toUri()
 
-        val response = restTemplate.getForEntity(uri, String::class.java)
+        val response = restTemplate.getForEntity<String>(uri)
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals("{\"status\":\"UP\"}", response.body)
@@ -39,7 +40,7 @@ class ActuatorTest(
                 .buildAndExpand(managementPort)
                 .toUri()
 
-        val response = restTemplate.getForEntity(uri, String::class.java)
+        val response = restTemplate.getForEntity<String>(uri)
 
         assertEquals(HttpStatus.OK, response.statusCode)
     }
@@ -52,7 +53,7 @@ class ActuatorTest(
                 .buildAndExpand(managementPort)
                 .toUri()
 
-        val response = restTemplate.getForEntity(uri, String::class.java)
+        val response = restTemplate.getForEntity<String>(uri)
 
         assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
     }

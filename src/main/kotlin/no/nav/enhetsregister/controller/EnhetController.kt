@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/enhet")
 class EnhetController(private val enhetService: EnhetService) {
 
+	@Suppress("SpringMvcPathVariableDeclarationInspection")
 	@Protected
 	@GetMapping("/{organisasjonsnummer}")
 	fun hentEnhet(@PathVariable("organisasjonsnummer") organisasjonsnummer: String): EnhetDto {

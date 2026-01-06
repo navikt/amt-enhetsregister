@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
-class KafkaProducerTest(
+class KafkaProducerServiceTest(
 	private val kafkaProducerService: KafkaProducerService,
 	private val kafkaTopicProperties: KafkaTopicProperties,
 ) : IntegrationTest() {
