@@ -18,14 +18,14 @@ repositories {
     maven { setUrl("https://github-package-registry-mirror.gc.nav.no/cached/maven-release") }
 }
 
-val jacksonModuleKotlinVersion = "3.0.3"
+val jacksonModuleKotlinVersion = "3.0.4"
 val commonVersion = "3.2025.11.10_14.07-a9f44944d7bc"
 val logstashEncoderVersion = "9.0"
 val shedlockVersion = "7.5.0"
 val tokenSupportVersion = "6.0.1"
 val okHttpVersion = "5.3.2"
 val mockOauth2ServerVersion = "3.0.1"
-val mockkVersion = "1.14.7"
+val mockkVersion = "1.14.9"
 
 // fjernes ved neste release av org.apache.kafka:kafka-clients
 configurations.configureEach {
@@ -39,7 +39,7 @@ configurations.configureEach {
 }
 
 dependencies {
-    implementation("at.yawk.lz4:lz4-java:1.10.2") // fjernes ved neste release av org.apache.kafka:kafka-clients
+    implementation("at.yawk.lz4:lz4-java:1.10.3") // fjernes ved neste release av org.apache.kafka:kafka-clients
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
