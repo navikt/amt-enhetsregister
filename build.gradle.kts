@@ -1,7 +1,7 @@
 plugins {
     val kotlinVersion = "2.3.10"
 
-    id("org.springframework.boot") version "4.0.2"
+    id("org.springframework.boot") version "4.0.3"
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
@@ -18,7 +18,7 @@ repositories {
     maven { setUrl("https://github-package-registry-mirror.gc.nav.no/cached/maven-release") }
 }
 
-val jacksonModuleKotlinVersion = "3.0.4"
+val jacksonModuleKotlinVersion = "3.1.0"
 val commonVersion = "3.2025.11.10_14.07-a9f44944d7bc"
 val logstashEncoderVersion = "9.0"
 val shedlockVersion = "7.6.0"
