@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     val kotlinVersion = "2.3.10"
 
@@ -10,7 +12,6 @@ plugins {
 group = "no.nav.amt_enhetsregister"
 version = "0.0.1-SNAPSHOT"
 description = "ACL mot Brønnøysundregisteret"
-java.sourceCompatibility = JavaVersion.VERSION_21
 
 repositories {
     mavenCentral()
@@ -82,8 +83,9 @@ dependencies {
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(25)
     compilerOptions {
+        jvmTarget = JvmTarget.JVM_25
         freeCompilerArgs.addAll(
             "-Xjsr305=strict",
             "-Xannotation-default-target=param-property",
