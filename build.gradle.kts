@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     val kotlinVersion = "2.3.10"
 
-    id("org.springframework.boot") version "4.0.4"
+    id("org.springframework.boot") version "4.0.5"
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
@@ -19,7 +19,7 @@ repositories {
     maven { setUrl("https://github-package-registry-mirror.gc.nav.no/cached/maven-release") }
 }
 
-val jacksonModuleKotlinVersion = "3.1.0"
+val jacksonModuleKotlinVersion = "3.1.1"
 val commonVersion = "3.2026.03.03_07.58-86d37775258a"
 val logstashEncoderVersion = "9.0"
 val shedlockVersion = "7.7.0"
