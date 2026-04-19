@@ -8,7 +8,6 @@ metadata:
 spec:
   image: {{image}}
   port: 8080
-  terminationGracePeriodSeconds: 30
   ingresses:
     - https://amt-enhetsregister.intern.nav.no
   prometheus:

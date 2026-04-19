@@ -19,7 +19,7 @@ repositories {
     maven { setUrl("https://github-package-registry-mirror.gc.nav.no/cached/maven-release") }
 }
 
-val jacksonModuleKotlinVersion = "3.1.1"
+val jacksonModuleKotlinVersion = "3.1.2"
 val commonVersion = "3.2026.04.08_08.37-229807cc181a"
 val logstashEncoderVersion = "9.0"
 val shedlockVersion = "7.7.0"
@@ -38,6 +38,14 @@ configurations.configureEach {
         }
     }
 }
+
+dependencyManagement {
+    imports {
+        mavenBom("tools.jackson:jackson-bom:$jacksonModuleKotlinVersion")
+    }
+}
+
+extra["tomcat.version"] = "11.0.21"
 
 dependencies {
     implementation("at.yawk.lz4:lz4-java:1.11.0") // fjernes ved neste release av org.apache.kafka:kafka-clients
