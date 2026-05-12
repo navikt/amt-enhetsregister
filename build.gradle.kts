@@ -19,7 +19,7 @@ repositories {
     maven { setUrl("https://github-package-registry-mirror.gc.nav.no/cached/maven-release") }
 }
 
-val jacksonModuleKotlinVersion = "3.1.2"
+val jacksonModuleKotlinVersion = "3.1.3"
 val commonVersion = "4.2026.05.05_06.25-f72fab488a93"
 val logstashEncoderVersion = "9.0"
 val shedlockVersion = "7.7.0"
