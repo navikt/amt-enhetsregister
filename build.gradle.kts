@@ -23,9 +23,9 @@ val jacksonModuleKotlinVersion = "3.1.3"
 val commonVersion = "4.2026.05.05_06.25-f72fab488a93"
 val logstashEncoderVersion = "9.0"
 val shedlockVersion = "7.7.0"
-val tokenSupportVersion = "6.0.6"
+val tokenSupportVersion = "6.0.7"
 val okHttpVersion = "5.3.2"
-val mockOauth2ServerVersion = "3.0.1"
+val mockOauth2ServerVersion = "3.0.3"
 val mockkVersion = "1.14.9"
 
 // fjernes ved neste release av org.apache.kafka:kafka-clients
