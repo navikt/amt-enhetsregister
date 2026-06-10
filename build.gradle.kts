@@ -19,14 +19,14 @@ repositories {
     maven { setUrl("https://github-package-registry-mirror.gc.nav.no/cached/maven-release") }
 }
 
-val jacksonModuleKotlinVersion = "3.1.3"
+val jacksonModuleKotlinVersion = "3.1.4"
 val commonVersion = "4.2026.05.29_05.35-a81a45859c9c"
 val logstashEncoderVersion = "9.0"
 val shedlockVersion = "7.7.0"
 val tokenSupportVersion = "6.0.8"
 val okHttpVersion = "5.3.2"
 val mockOauth2ServerVersion = "4.0.0"
-val mockkVersion = "1.14.9"
+val mockkVersion = "1.14.11"
 
 // fjernes ved neste release av org.apache.kafka:kafka-clients
 configurations.configureEach {
