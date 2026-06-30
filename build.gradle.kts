@@ -25,7 +25,7 @@ val logstashEncoderVersion = "9.0"
 val shedlockVersion = "7.7.0"
 val tokenSupportVersion = "6.0.8"
 val okHttpVersion = "5.4.0"
-val mockOauth2ServerVersion = "4.0.0"
+val mockOauth2ServerVersion = "4.0.1"
 val mockkVersion = "1.14.11"
 
 // fjernes ved neste release av org.apache.kafka:kafka-clients
