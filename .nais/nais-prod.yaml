@@ -26,14 +26,12 @@ spec:
     timeout: 3
 
   replicas:
-    min: 1
+    disableAutoScaling: true
+    min: 2
     max: 2
-    scalingStrategy:
-      cpu:
-        thresholdPercentage: 500
   resources:
     requests:
-      cpu: 20m
+      cpu: 10m
       memory: 512Mi
     limits:
       memory: 4096Mi # Trenger mye minne når man skal laste ned alle enheter
