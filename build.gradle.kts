@@ -28,19 +28,18 @@ val okHttpVersion = "5.5.0"
 val mockOauth2ServerVersion = "6.0.2"
 val mockkVersion = "1.14.11"
 
-// fjernes ved neste release av org.apache.kafka:kafka-clients
-configurations.configureEach {
-    resolutionStrategy {
-        capabilitiesResolution {
-            withCapability("org.lz4:lz4-java") {
-                select(candidates.first { (it.id as ModuleComponentIdentifier).group == "at.yawk.lz4" })
-            }
-        }
-    }
-}
+// midlertidig fix for CVE-2026-65182
+extra["tomcat.version"] = "11.0.25"
 
 dependencies {
-    implementation("at.yawk.lz4:lz4-java:1.11.2") // fjernes ved neste release av org.apache.kafka:kafka-clients
+    constraints {
+        implementation("at.yawk.lz4:lz4-java") {
+            version {
+                strictly("1.11.2")
+            }
+            because("Fixes CVE-2026-59949")
+        }
+    }
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
