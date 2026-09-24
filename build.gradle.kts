@@ -28,25 +28,22 @@ val okHttpVersion = "5.5.0"
 val mockOauth2ServerVersion = "6.0.2"
 val mockkVersion = "1.14.11"
 
-// midlertidig fix for CVE-2026-65182
-extra["tomcat.version"] = "11.0.25"
-
 dependencies {
     constraints {
         implementation("at.yawk.lz4:lz4-java") {
-            version {
-                strictly("1.11.2")
-            }
+            version { strictly("1.11.2") }
             because("Fixes CVE-2026-59949")
         }
     }
 
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-logging")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
+    runtimeOnly("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-web") {
+        exclude(group = "org.springframework.boot", module = "spring-boot-starter-tomcat")
+    }
+    runtimeOnly("org.springframework.boot:spring-boot-starter-jetty")
+    runtimeOnly("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
-    implementation("org.springframework.boot:spring-boot-flyway")
+    runtimeOnly("org.springframework.boot:spring-boot-flyway")
 
     implementation("tools.jackson.module:jackson-module-kotlin:${jacksonModuleKotlinVersion}")
 
@@ -58,11 +55,10 @@ dependencies {
         exclude("io.confluent", "kafka-avro-serializer")
     }
 
-    implementation("org.flywaydb:flyway-database-postgresql")
-    implementation("io.micrometer:micrometer-registry-prometheus")
+    runtimeOnly("org.flywaydb:flyway-database-postgresql")
+    runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:$shedlockVersion")
-    implementation("net.javacrumbs.shedlock:shedlock-core:$shedlockVersion")
-    implementation("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
+    runtimeOnly("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
     implementation("no.nav.security:token-validation-spring:$tokenSupportVersion")
     implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
     runtimeOnly("org.postgresql:postgresql")
