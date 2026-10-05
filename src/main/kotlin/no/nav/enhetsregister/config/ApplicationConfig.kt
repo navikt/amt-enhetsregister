@@ -17,7 +17,6 @@ class ApplicationConfig {
 
 	@Bean
 	fun logFilterRegistrationBean() = FilterRegistrationBean<LogRequestFilter>().apply {
-		@Suppress("UsePropertyAccessSyntax")
 		setFilter(LogRequestFilter("amt-enhetsregister", false))
 		order = 1
 		addUrlPatterns("/*")
