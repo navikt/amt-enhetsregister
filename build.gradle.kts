@@ -31,8 +31,8 @@ val mockkVersion = "1.14.11"
 // Override Spring Boot's managed Jackson versions to apply the security fixes in 3.1.7.
 dependencyManagement {
     dependencies {
-        dependency("tools.jackson.core:jackson-core:3.2.3")
-        dependency("tools.jackson.core:jackson-databind:3.2.3")
+        dependency("tools.jackson.core:jackson-core:3.1.7")
+        dependency("tools.jackson.core:jackson-databind:3.1.7")
     }
 }
 
