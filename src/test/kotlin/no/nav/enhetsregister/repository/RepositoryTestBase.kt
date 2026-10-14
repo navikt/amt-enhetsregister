@@ -16,21 +16,20 @@ import javax.sql.DataSource
 @AutoConfigureJson
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 abstract class RepositoryTestBase {
-	@Autowired
-	protected lateinit var dataSource: DataSource
+    @Autowired
+    protected lateinit var dataSource: DataSource
 
-	companion object {
-		private const val POSTGRES_DOCKER_IMAGE_NAME = "postgres:17-alpine"
+    companion object {
+        private const val POSTGRES_DOCKER_IMAGE_NAME = "postgres:17-alpine"
 
-		@ServiceConnection
-		private val postgres =
-			PostgreSQLContainer(
-				DockerImageName
-					.parse(POSTGRES_DOCKER_IMAGE_NAME)
-					.asCompatibleSubstituteFor("postgres"),
-			).apply {
-				addEnv("TZ", "Europe/Oslo")
-				waitingFor(Wait.forListeningPort())
-			}
-	}
+        @ServiceConnection
+        private val postgres = PostgreSQLContainer(
+            DockerImageName
+                .parse(POSTGRES_DOCKER_IMAGE_NAME)
+                .asCompatibleSubstituteFor("postgres"),
+        ).apply {
+            addEnv("TZ", "Europe/Oslo")
+            waitingFor(Wait.forListeningPort())
+        }
+    }
 }

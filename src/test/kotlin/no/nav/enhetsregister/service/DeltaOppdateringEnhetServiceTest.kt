@@ -4,357 +4,357 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.enhetsregister.client.BronnoysundClient
-import no.nav.enhetsregister.client.EnhetOppdatering
-import no.nav.enhetsregister.client.EnhetOppdateringType
-import no.nav.enhetsregister.client.Moderenhet
-import no.nav.enhetsregister.client.Underenhet
+import no.nav.enhetsregister.domain.EnhetOppdatering
+import no.nav.enhetsregister.domain.EnhetOppdateringType
+import no.nav.enhetsregister.domain.EnhetType
+import no.nav.enhetsregister.domain.Moderenhet
+import no.nav.enhetsregister.domain.Underenhet
 import no.nav.enhetsregister.repository.DeltaOppdateringProgresjonRepository
-import no.nav.enhetsregister.repository.type.DeltaEnhetOppdateringProgresjon
-import no.nav.enhetsregister.repository.type.EnhetType
+import no.nav.enhetsregister.repository.model.DeltaEnhetOppdateringProgresjon
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.ZonedDateTime
 
 class DeltaOppdateringEnhetServiceTest {
+    val bronnoysundClient: BronnoysundClient = mockk()
+    val enhetService: EnhetService = mockk()
+    val deltaOppdateringProgresjonRepository: DeltaOppdateringProgresjonRepository = mockk()
+    val deltaOppdateringEnhetService =
+        DeltaOppdateringEnhetService(
+            enhetService = enhetService,
+            deltaOppdateringRepository = deltaOppdateringProgresjonRepository,
+            bronnoysundClient = bronnoysundClient,
+        )
 
-	val bronnoysundClient: BronnoysundClient = mockk()
-	val enhetService: EnhetService = mockk()
-	val deltaOppdateringProgresjonRepository: DeltaOppdateringProgresjonRepository = mockk()
-	val deltaOppdateringEnhetService = DeltaOppdateringEnhetService(
-		enhetService = enhetService,
-		deltaOppdateringRepository = deltaOppdateringProgresjonRepository,
-		bronnoysundClient = bronnoysundClient
-	)
+    @BeforeEach
+    fun setupMock() {
+        every {
+            deltaOppdateringProgresjonRepository.hentOppdateringProgresjon(EnhetType.MODERENHET)
+        } returns DeltaEnhetOppdateringProgresjon(
+            oppdateringId = 33,
+            enhetType = EnhetType.MODERENHET,
+        )
 
-	@BeforeEach
-	fun setupMock() {
-		val dato = ZonedDateTime.now()
+        every {
+            deltaOppdateringProgresjonRepository.hentOppdateringProgresjon(EnhetType.UNDERENHET)
+        } returns DeltaEnhetOppdateringProgresjon(
+            oppdateringId = 33,
+            enhetType = EnhetType.UNDERENHET,
+        )
 
-		every {
-			deltaOppdateringProgresjonRepository.hentOppdateringProgresjon(EnhetType.MODERENHET)
-		} returns DeltaEnhetOppdateringProgresjon(33, EnhetType.MODERENHET, dato)
+        every { enhetService.oppdaterEnheter(any()) } returns Unit
+        every {
+            deltaOppdateringProgresjonRepository.oppdaterProgresjon(any(), any())
+        } returns Unit
+    }
 
-		every {
-			deltaOppdateringProgresjonRepository.hentOppdateringProgresjon(EnhetType.UNDERENHET)
-		} returns DeltaEnhetOppdateringProgresjon(33, EnhetType.UNDERENHET, dato)
+    companion object {
+        private val enhetOppdateringInTest =
+            EnhetOppdatering(
+                oppdateringId = 33,
+                dato = ZonedDateTime.now(),
+                organisasjonsnummer = "999000000",
+                endringstype = EnhetOppdateringType.ENDRING,
+            )
 
-		every { enhetService.oppdaterEnheter(any()) } returns Unit
-		every {
-			deltaOppdateringProgresjonRepository.oppdaterProgresjon(any(), any())
-		} returns Unit
-	}
+        private val moderEnhetInTest = Moderenhet(
+            organisasjonsnummer = "999000000",
+            navn = "Nytt Orgnavn",
+            slettedato = null,
+        )
 
-	companion object {
-		private val enhetOppdateringInTest = EnhetOppdatering(
-			oppdateringId = 33,
-			dato = ZonedDateTime.now(),
-			organisasjonsnummer = "999000000",
-			endringstype = EnhetOppdateringType.ENDRING
-		)
+        private val upsertEnhetInTest = EnhetService.UpsertEnhet(
+            organisasjonsnummer = "999000000",
+            navn = "Nytt Orgnavn",
+            overordnetEnhetOrgNr = null,
+        )
 
-		private val moderEnhetInTest = Moderenhet(
-			organisasjonsnummer = "999000000",
-			navn = "Nytt Orgnavn",
-			slettedato = null
-		)
+        private val underEnhetInTest = Underenhet(
+            organisasjonsnummer = "899000000",
+            navn = "Nytt Orgnavn",
+            slettedato = null,
+            overordnetEnhet = "999000000",
+        )
 
-		private val upsertEnhetInTest = EnhetService.UpsertEnhet(
-			organisasjonsnummer = "999000000",
-			navn = "Nytt Orgnavn",
-			overordnetEnhetOrgNr = null
-		)
+        private val upsertUnderEnhetInTest = EnhetService.UpsertEnhet(
+            organisasjonsnummer = "899000000",
+            navn = "Nytt Orgnavn",
+            overordnetEnhetOrgNr = "999000000",
+        )
+    }
 
-		private val underEnhetInTest = Underenhet(
-			organisasjonsnummer = "899000000",
-			navn = "Nytt Orgnavn",
-			slettedato = null,
-			overordnetEnhet = "999000000"
-		)
+    // Moderenheter
+    @Test
+    fun `endret moderenhet skal endres`() {
+        every {
+            bronnoysundClient.hentModerenhetOppdateringer(any(), any())
+        } returns listOf(enhetOppdateringInTest)
 
-		private val upsertUnderEnhetInTest = EnhetService.UpsertEnhet(
-			organisasjonsnummer = "899000000",
-			navn = "Nytt Orgnavn",
-			overordnetEnhetOrgNr = "999000000"
-		)
-	}
+        every { bronnoysundClient.hentModerenhet("999000000") } returns moderEnhetInTest
 
-	// Moderenheter
-	@Test
-	fun `endret moderenhet skal endres`() {
-		every {
-			bronnoysundClient.hentModerenhetOppdateringer(any(), any())
-		} returns listOf(enhetOppdateringInTest)
+        deltaOppdateringEnhetService.deltaOppdaterModerenheter()
 
-		every { bronnoysundClient.hentModerenhet("999000000") } returns moderEnhetInTest
+        verify(exactly = 1) {
+            enhetService.oppdaterEnheter(listOf(upsertEnhetInTest))
+        }
+    }
 
-		deltaOppdateringEnhetService.deltaOppdaterModerenheter()
+    @Test
+    fun `ny moderenhet skal upsertes`() {
+        every {
+            bronnoysundClient.hentModerenhetOppdateringer(any(), any())
+        } returns
+            listOf(
+                enhetOppdateringInTest.copy(endringstype = EnhetOppdateringType.NY),
+            )
 
-		verify(exactly = 1) {
-			enhetService.oppdaterEnheter(listOf(upsertEnhetInTest))
-		}
-	}
+        every {
+            bronnoysundClient.hentModerenhet("999000000")
+        } returns moderEnhetInTest
 
-	@Test
-	fun `ny moderenhet skal upsertes`() {
-		every {
-			bronnoysundClient.hentModerenhetOppdateringer(any(), any())
-		} returns listOf(
-			enhetOppdateringInTest.copy(endringstype = EnhetOppdateringType.NY)
-		)
+        deltaOppdateringEnhetService.deltaOppdaterModerenheter()
 
-		every {
-			bronnoysundClient.hentModerenhet("999000000")
-		} returns moderEnhetInTest
+        verify(exactly = 1) {
+            enhetService.oppdaterEnheter(listOf(upsertEnhetInTest))
+        }
+    }
 
-		deltaOppdateringEnhetService.deltaOppdaterModerenheter()
+    @Test
+    fun `ukjent endring av moderenhet skal upsertes`() {
+        every {
+            bronnoysundClient.hentModerenhetOppdateringer(any(), any())
+        } returns listOf(enhetOppdateringInTest.copy(endringstype = EnhetOppdateringType.UKJENT))
 
-		verify(exactly = 1) {
-			enhetService.oppdaterEnheter(listOf(upsertEnhetInTest))
-		}
-	}
+        every {
+            bronnoysundClient.hentModerenhet("999000000")
+        } returns moderEnhetInTest
 
-	@Test
-	fun `ukjent endring av moderenhet skal upsertes`() {
-		every {
-			bronnoysundClient.hentModerenhetOppdateringer(any(), any())
-		} returns listOf(
-			enhetOppdateringInTest.copy(endringstype = EnhetOppdateringType.UKJENT)
-		)
+        deltaOppdateringEnhetService.deltaOppdaterModerenheter()
 
-		every {
-			bronnoysundClient.hentModerenhet("999000000")
-		} returns moderEnhetInTest
+        verify(exactly = 1) {
+            enhetService.oppdaterEnheter(listOf(upsertEnhetInTest))
+        }
+    }
 
-		deltaOppdateringEnhetService.deltaOppdaterModerenheter()
+    @Test
+    fun `sletting av moderenhet skal gi slettet i navnet `() {
+        every {
+            bronnoysundClient.hentModerenhetOppdateringer(any(), any())
+        } returns listOf(enhetOppdateringInTest.copy(endringstype = EnhetOppdateringType.SLETTING))
 
-		verify(exactly = 1) {
-			enhetService.oppdaterEnheter(listOf(upsertEnhetInTest))
-		}
-	}
+        every {
+            bronnoysundClient.hentModerenhet("999000000")
+        } returns moderEnhetInTest.copy(slettedato = ZonedDateTime.now().toString())
 
-	@Test
-	fun `sletting av moderenhet skal gi slettet i navnet `() {
-		every {
-			bronnoysundClient.hentModerenhetOppdateringer(any(), any())
-		} returns listOf(
-			enhetOppdateringInTest.copy(endringstype = EnhetOppdateringType.SLETTING)
-		)
+        deltaOppdateringEnhetService.deltaOppdaterModerenheter()
 
-		every {
-			bronnoysundClient.hentModerenhet("999000000")
-		} returns moderEnhetInTest.copy(slettedato = ZonedDateTime.now().toString())
+        verify(exactly = 1) {
+            enhetService.oppdaterEnheter(
+                listOf(
+                    upsertEnhetInTest.copy(navn = "Nytt Orgnavn (slettet)"),
+                ),
+            )
+        }
+    }
 
-		deltaOppdateringEnhetService.deltaOppdaterModerenheter()
+    @Test
+    fun `fjerning av moderenhet skal gi fjernet navn `() {
+        every {
+            bronnoysundClient.hentModerenhetOppdateringer(any(), any())
+        } returns listOf(enhetOppdateringInTest.copy(endringstype = EnhetOppdateringType.FJERNET))
 
-		verify(exactly = 1) {
-			enhetService.oppdaterEnheter(
-				listOf(
-					upsertEnhetInTest.copy(navn = "Nytt Orgnavn (slettet)")
-				)
-			)
-		}
-	}
+        every {
+            bronnoysundClient.hentModerenhet("999000000")
+        } returns null
 
-	@Test
-	fun `fjerning av moderenhet skal gi fjernet navn `() {
-		every {
-			bronnoysundClient.hentModerenhetOppdateringer(any(), any())
-		} returns listOf(
-			enhetOppdateringInTest.copy(endringstype = EnhetOppdateringType.FJERNET)
-		)
+        deltaOppdateringEnhetService.deltaOppdaterModerenheter()
 
-		every {
-			bronnoysundClient.hentModerenhet("999000000")
-		} returns null
+        verify(exactly = 1) {
+            enhetService.oppdaterEnheter(
+                listOf(
+                    upsertEnhetInTest.copy(navn = "Fjernet virksomhet"),
+                ),
+            )
+        }
+    }
 
-		deltaOppdateringEnhetService.deltaOppdaterModerenheter()
+    // Samme for underenheter
 
-		verify(exactly = 1) {
-			enhetService.oppdaterEnheter(
-				listOf(
-					upsertEnhetInTest.copy(navn = "Fjernet virksomhet")
-				)
-			)
-		}
-	}
+    @Test
+    fun `endret underenhet skal endres`() {
+        every {
+            bronnoysundClient.hentUnderenhetOppdateringer(any(), any())
+        } returns listOf(enhetOppdateringInTest)
 
-	// Samme for underenheter
+        every {
+            bronnoysundClient.hentUnderenhet("999000000")
+        } returns underEnhetInTest
 
-	@Test
-	fun `endret underenhet skal endres`() {
-		every {
-			bronnoysundClient.hentUnderenhetOppdateringer(any(), any())
-		} returns listOf(enhetOppdateringInTest)
+        deltaOppdateringEnhetService.deltaOppdaterUnderenheter()
 
-		every {
-			bronnoysundClient.hentUnderenhet("999000000")
-		} returns underEnhetInTest
+        verify(exactly = 1) {
+            enhetService.oppdaterEnheter(listOf(upsertUnderEnhetInTest))
+        }
+    }
 
-		deltaOppdateringEnhetService.deltaOppdaterUnderenheter()
+    @Test
+    fun `ny underenhet skal upsertes`() {
+        every {
+            bronnoysundClient.hentUnderenhetOppdateringer(any(), any())
+        } returns listOf(
+            EnhetOppdatering(
+                oppdateringId = 33,
+                dato = ZonedDateTime.now(),
+                organisasjonsnummer = "899000000",
+                endringstype = EnhetOppdateringType.NY,
+            ),
+        )
 
-		verify(exactly = 1) {
-			enhetService.oppdaterEnheter(listOf(upsertUnderEnhetInTest))
-		}
-	}
+        every {
+            bronnoysundClient.hentUnderenhet("899000000")
+        } returns Underenhet(
+            organisasjonsnummer = "899000000",
+            navn = "Orgnavn",
+            slettedato = null,
+            overordnetEnhet = "999000000",
+        )
 
-	@Test
-	fun `ny underenhet skal upsertes`() {
-		every {
-			bronnoysundClient.hentUnderenhetOppdateringer(any(), any())
-		} returns listOf(
-			EnhetOppdatering(
-				oppdateringId = 33,
-				dato = ZonedDateTime.now(),
-				organisasjonsnummer = "899000000",
-				endringstype = EnhetOppdateringType.NY
-			)
-		)
+        deltaOppdateringEnhetService.deltaOppdaterUnderenheter()
 
-		every {
-			bronnoysundClient.hentUnderenhet("899000000")
-		} returns Underenhet(
-			organisasjonsnummer = "899000000",
-			navn = "Orgnavn",
-			slettedato = null,
-			overordnetEnhet = "999000000"
-		)
+        verify(exactly = 1) {
+            enhetService.oppdaterEnheter(
+                listOf(
+                    EnhetService.UpsertEnhet(
+                        organisasjonsnummer = "899000000",
+                        navn = "Orgnavn",
+                        overordnetEnhetOrgNr = "999000000",
+                    ),
+                ),
+            )
+        }
+    }
 
-		deltaOppdateringEnhetService.deltaOppdaterUnderenheter()
+    @Test
+    fun `ukjent endring av underenhet skal upsertes`() {
+        every {
+            bronnoysundClient.hentUnderenhetOppdateringer(any(), any())
+        } returns listOf(
+            EnhetOppdatering(
+                oppdateringId = 33,
+                dato = ZonedDateTime.now(),
+                organisasjonsnummer = "899000000",
+                endringstype = EnhetOppdateringType.UKJENT,
+            ),
+        )
 
-		verify(exactly = 1) {
-			enhetService.oppdaterEnheter(
-				listOf(
-					EnhetService.UpsertEnhet(
-						organisasjonsnummer = "899000000",
-						navn = "Orgnavn",
-						overordnetEnhetOrgNr = "999000000"
-					)
-				)
-			)
-		}
-	}
+        every {
+            bronnoysundClient.hentUnderenhet("899000000")
+        } returns Underenhet(
+            organisasjonsnummer = "899000000",
+            navn = "Orgnavn",
+            slettedato = null,
+            overordnetEnhet = "999000000",
+        )
 
-	@Test
-	fun `ukjent endring av underenhet skal upsertes`() {
-		every {
-			bronnoysundClient.hentUnderenhetOppdateringer(any(), any())
-		} returns listOf(
-			EnhetOppdatering(
-				oppdateringId = 33,
-				dato = ZonedDateTime.now(),
-				organisasjonsnummer = "899000000",
-				endringstype = EnhetOppdateringType.UKJENT
-			)
-		)
+        deltaOppdateringEnhetService.deltaOppdaterUnderenheter()
 
-		every {
-			bronnoysundClient.hentUnderenhet("899000000")
-		} returns Underenhet(
-			organisasjonsnummer = "899000000",
-			navn = "Orgnavn",
-			slettedato = null,
-			overordnetEnhet = "999000000"
-		)
+        verify(exactly = 1) {
+            enhetService.oppdaterEnheter(
+                listOf(
+                    EnhetService.UpsertEnhet(
+                        organisasjonsnummer = "899000000",
+                        navn = "Orgnavn",
+                        overordnetEnhetOrgNr = "999000000",
+                    ),
+                ),
+            )
+        }
+    }
 
-		deltaOppdateringEnhetService.deltaOppdaterUnderenheter()
+    @Test
+    fun `sletting av underenhet skal gi slettet i navnet `() {
+        every {
+            bronnoysundClient.hentUnderenhetOppdateringer(any(), any())
+        } returns listOf(
+            EnhetOppdatering(
+                oppdateringId = 33,
+                dato = ZonedDateTime.now(),
+                organisasjonsnummer = "899000000",
+                endringstype = EnhetOppdateringType.SLETTING,
+            ),
+        )
 
-		verify(exactly = 1) {
-			enhetService.oppdaterEnheter(
-				listOf(
-					EnhetService.UpsertEnhet(
-						organisasjonsnummer = "899000000",
-						navn = "Orgnavn",
-						overordnetEnhetOrgNr = "999000000"
-					)
-				)
-			)
-		}
-	}
+        every {
+            bronnoysundClient.hentUnderenhet("899000000")
+        } returns Underenhet(
+            organisasjonsnummer = "899000000",
+            navn = "Orgnavn",
+            slettedato = ZonedDateTime.now().toString(),
+            overordnetEnhet = null,
+        )
 
-	@Test
-	fun `sletting av underenhet skal gi slettet i navnet `() {
-		every {
-			bronnoysundClient.hentUnderenhetOppdateringer(any(), any())
-		} returns listOf(
-			EnhetOppdatering(
-				oppdateringId = 33,
-				dato = ZonedDateTime.now(),
-				organisasjonsnummer = "899000000",
-				endringstype = EnhetOppdateringType.SLETTING
-			)
-		)
+        every {
+            enhetService.hentEnhet("899000000")
+        } returns EnhetService.EnhetMedOverordnetEnhet(
+            organisasjonsnummer = "899000000",
+            navn = "Orgnavn",
+            overordnetEnhetOrganisasjonsnummer = "999000000",
+            overordnetEnhetNavn = "Moderenhetnavn",
+        )
 
-		every {
-			bronnoysundClient.hentUnderenhet("899000000")
-		} returns Underenhet(
-			organisasjonsnummer = "899000000",
-			navn = "Orgnavn",
-			slettedato = ZonedDateTime.now().toString(),
-			overordnetEnhet = null
-		)
+        deltaOppdateringEnhetService.deltaOppdaterUnderenheter()
 
-		every {
-			enhetService.hentEnhet("899000000")
-		} returns EnhetService.EnhetMedOverordnetEnhet(
-			organisasjonsnummer = "899000000",
-			navn = "Orgnavn",
-			overordnetEnhetOrganisasjonsnummer = "999000000",
-			overordnetEnhetNavn = "Moderenhetnavn"
-		)
+        verify(exactly = 1) {
+            enhetService.oppdaterEnheter(
+                listOf(
+                    EnhetService.UpsertEnhet(
+                        organisasjonsnummer = "899000000",
+                        navn = "Orgnavn (slettet)",
+                        overordnetEnhetOrgNr = "999000000",
+                    ),
+                ),
+            )
+        }
+    }
 
-		deltaOppdateringEnhetService.deltaOppdaterUnderenheter()
+    @Test
+    fun `fjerning av underenhet skal gi fjernet navn `() {
+        every {
+            bronnoysundClient.hentUnderenhetOppdateringer(any(), any())
+        } returns listOf(
+            EnhetOppdatering(
+                oppdateringId = 33,
+                dato = ZonedDateTime.now(),
+                organisasjonsnummer = "899000000",
+                endringstype = EnhetOppdateringType.FJERNET,
+            ),
+        )
 
-		verify(exactly = 1) {
-			enhetService.oppdaterEnheter(
-				listOf(
-					EnhetService.UpsertEnhet(
-						organisasjonsnummer = "899000000",
-						navn = "Orgnavn (slettet)",
-						overordnetEnhetOrgNr = "999000000"
-					)
-				)
-			)
-		}
-	}
+        every {
+            bronnoysundClient.hentUnderenhet("899000000")
+        } returns null
 
-	@Test
-	fun `fjerning av underenhet skal gi fjernet navn `() {
-		every {
-			bronnoysundClient.hentUnderenhetOppdateringer(any(), any())
-		} returns listOf(
-			EnhetOppdatering(
-				oppdateringId = 33,
-				dato = ZonedDateTime.now(),
-				organisasjonsnummer = "899000000",
-				endringstype = EnhetOppdateringType.FJERNET
-			)
-		)
+        every {
+            enhetService.hentEnhet("899000000")
+        } returns EnhetService.EnhetMedOverordnetEnhet(
+            organisasjonsnummer = "899000000",
+            navn = "Orgnavn",
+            overordnetEnhetOrganisasjonsnummer = "999000000",
+            overordnetEnhetNavn = "Moderenhetnavn",
+        )
 
-		every {
-			bronnoysundClient.hentUnderenhet("899000000")
-		} returns null
+        deltaOppdateringEnhetService.deltaOppdaterUnderenheter()
 
-		every {
-			enhetService.hentEnhet("899000000")
-		} returns EnhetService.EnhetMedOverordnetEnhet(
-			organisasjonsnummer = "899000000",
-			navn = "Orgnavn",
-			overordnetEnhetOrganisasjonsnummer = "999000000",
-			overordnetEnhetNavn = "Moderenhetnavn"
-		)
-
-		deltaOppdateringEnhetService.deltaOppdaterUnderenheter()
-
-		verify(exactly = 1) {
-			enhetService.oppdaterEnheter(
-				listOf(
-					EnhetService.UpsertEnhet(
-						organisasjonsnummer = "899000000",
-						navn = "Fjernet virksomhet",
-						overordnetEnhetOrgNr = "999000000"
-					)
-				)
-			)
-		}
-	}
+        verify(exactly = 1) {
+            enhetService.oppdaterEnheter(
+                listOf(
+                    EnhetService.UpsertEnhet(
+                        organisasjonsnummer = "899000000",
+                        navn = "Fjernet virksomhet",
+                        overordnetEnhetOrgNr = "999000000",
+                    ),
+                ),
+            )
+        }
+    }
 }
