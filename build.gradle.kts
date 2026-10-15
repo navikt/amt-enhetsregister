@@ -21,12 +21,12 @@ repositories {
 
 val jacksonModuleKotlinVersion = "3.2.3"
 val commonVersion = "4.2026.09.24_06.17-80dfc0eacb29"
+val amtLibVersion = "1.2026.10.05_12.51-509ff28b4464"
 val logstashEncoderVersion = "9.0"
 val shedlockVersion = "7.10.1"
-val tokenSupportVersion = "6.0.13"
-val okHttpVersion = "5.5.0"
 val mockOauth2ServerVersion = "6.0.7"
 val mockkVersion = "1.14.11"
+val springMockkVersion = "5.0.1"
 
 // Override Spring Boot's managed Jackson versions to apply the security fixes in 3.1.7.
 dependencyManagement {
@@ -44,16 +44,18 @@ dependencies {
         }
     }
 
-    runtimeOnly("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web") {
         exclude(group = "org.springframework.boot", module = "spring-boot-starter-tomcat")
     }
+    implementation("org.springframework.boot:spring-boot-restclient")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     runtimeOnly("org.springframework.boot:spring-boot-starter-jetty")
     runtimeOnly("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     runtimeOnly("org.springframework.boot:spring-boot-flyway")
 
-    implementation("tools.jackson.module:jackson-module-kotlin:${jacksonModuleKotlinVersion}")
+    implementation("tools.jackson.module:jackson-module-kotlin:$jacksonModuleKotlinVersion")
 
     implementation("no.nav.common:job:$commonVersion")
     implementation("no.nav.common:rest:$commonVersion")
@@ -62,13 +64,12 @@ dependencies {
         exclude("org.xerial.snappy", "snappy-java")
         exclude("io.confluent", "kafka-avro-serializer")
     }
+    implementation("no.nav.amt.deltakelser.lib:spring-boot:$amtLibVersion")
 
     runtimeOnly("org.flywaydb:flyway-database-postgresql")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:$shedlockVersion")
     runtimeOnly("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
-    implementation("no.nav.security:token-validation-spring:$tokenSupportVersion")
-    implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
     runtimeOnly("org.postgresql:postgresql")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -77,22 +78,20 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-resttestclient")
 
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.springframework.boot:spring-boot-restclient-test")
     testImplementation("org.testcontainers:testcontainers-postgresql")
     testImplementation("org.testcontainers:testcontainers-kafka")
 
     testImplementation("no.nav.security:mock-oauth2-server:$mockOauth2ServerVersion")
-    testImplementation("com.squareup.okhttp3:mockwebserver:$okHttpVersion")
     testImplementation("io.mockk:mockk-jvm:$mockkVersion")
+    testImplementation("com.ninja-squad:springmockk:$springMockkVersion")
 }
 
 kotlin {
     jvmToolchain(25)
     compilerOptions {
         jvmTarget = JvmTarget.JVM_25
-        freeCompilerArgs.addAll(
-            "-Xjsr305=strict",
-            "-Xannotation-default-target=param-property",
-        )
+        freeCompilerArgs.addAll("-Xjsr305=strict")
     }
 }
 

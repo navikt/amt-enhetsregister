@@ -9,14 +9,14 @@ import tools.jackson.databind.ObjectMapper
 
 @Service
 class KafkaProducerService(
-	private val kafkaProducerClient: KafkaProducerClient<ByteArray, ByteArray>,
-	private val kafkaTopicProperties: KafkaTopicProperties,
-	private val objectMapper: ObjectMapper
+    private val kafkaProducerClient: KafkaProducerClient<ByteArray, ByteArray>,
+    private val kafkaTopicProperties: KafkaTopicProperties,
+    private val objectMapper: ObjectMapper,
 ) {
-	fun publiserVirksomhet(virksomhetDto: VirksomhetV1Dto) {
-		val key = virksomhetDto.organisasjonsnummer.toByteArray()
-		val value = objectMapper.writeValueAsBytes(virksomhetDto)
-		val record = ProducerRecord(kafkaTopicProperties.virksomheterTopic, key, value)
-		kafkaProducerClient.sendSync(record)
-	}
+    fun publiserVirksomhet(virksomhetDto: VirksomhetV1Dto) {
+        val key = virksomhetDto.organisasjonsnummer.toByteArray()
+        val value = objectMapper.writeValueAsBytes(virksomhetDto)
+        val record = ProducerRecord(kafkaTopicProperties.virksomheterTopic, key, value)
+        kafkaProducerClient.sendSync(record)
+    }
 }

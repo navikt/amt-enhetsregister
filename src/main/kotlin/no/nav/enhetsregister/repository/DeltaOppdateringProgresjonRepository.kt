@@ -1,46 +1,67 @@
 package no.nav.enhetsregister.repository
 
-import no.nav.enhetsregister.repository.type.DeltaEnhetOppdateringProgresjon
-import no.nav.enhetsregister.repository.type.EnhetType
+import no.nav.enhetsregister.domain.EnhetType
+import no.nav.enhetsregister.repository.model.DeltaEnhetOppdateringProgresjon
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
-import java.time.ZoneId
 
 @Repository
-class DeltaOppdateringProgresjonRepository(private val jdbcTemplate: JdbcTemplate) {
+class DeltaOppdateringProgresjonRepository(
+    private val jdbcTemplate: JdbcTemplate,
+) {
+    fun hentOppdateringProgresjon(enhetType: EnhetType): DeltaEnhetOppdateringProgresjon {
+        val sql =
+            """
+            SELECT
+                $OPPDATERING_ID,
+                $ENHET_TYPE
+            FROM $TABLE_NAME
+            WHERE $ENHET_TYPE = ?::enhet_type
+            """.trimIndent()
 
-	private companion object Table {
-		const val TABLE_NAME = "delta_enhet_oppdatering"
+        return jdbcTemplate.query(sql, rowMapper, enhetType.toDatabaseValue()).first()
+    }
 
-		const val OPPDATERING_ID = "oppdatering_id"
-		const val ENHET_TYPE = "enhet_type"
-		const val SISTE_OPPDATERING = "siste_oppdatering"
-	}
+    fun oppdaterProgresjon(
+        enhetType: EnhetType,
+        oppdateringId: Int,
+    ) {
+        val sql =
+            """
+            UPDATE $TABLE_NAME 
+            SET 
+                $OPPDATERING_ID = ?, 
+                $SISTE_OPPDATERING = CURRENT_TIMESTAMP 
+            WHERE $ENHET_TYPE = ?::enhet_type
+            """.trimIndent()
 
-	val rowMapper =
-		RowMapper { rs, _ ->
-			DeltaEnhetOppdateringProgresjon(
-				oppdateringId = rs.getInt(OPPDATERING_ID),
-				enhetType = EnhetType.valueOf(rs.getString(ENHET_TYPE)),
-				sisteOppdatering = rs.getTimestamp(SISTE_OPPDATERING).toLocalDateTime().atZone(ZoneId.systemDefault())
-			)
-		}
+        jdbcTemplate.update(sql, oppdateringId, enhetType.toDatabaseValue())
+    }
 
-	fun hentOppdateringProgresjon(enhetType: EnhetType): DeltaEnhetOppdateringProgresjon {
-		val sql = """
-			SELECT * FROM $TABLE_NAME WHERE $ENHET_TYPE = ?::enhet_type
-		""".trimIndent()
+    private companion object Table {
+        const val TABLE_NAME = "delta_enhet_oppdatering"
 
-		return jdbcTemplate.query(sql, rowMapper, enhetType.name).first()
-	}
+        const val OPPDATERING_ID = "oppdatering_id"
+        const val ENHET_TYPE = "enhet_type"
+        const val SISTE_OPPDATERING = "siste_oppdatering"
 
-	fun oppdaterProgresjon(enhetType: EnhetType, oppdateringId: Int) {
-		val sql = """
-			UPDATE $TABLE_NAME SET $OPPDATERING_ID = ?, $SISTE_OPPDATERING = CURRENT_TIMESTAMP WHERE $ENHET_TYPE = ?::enhet_type
-		""".trimIndent()
+        val rowMapper = RowMapper { rs, _ ->
+            DeltaEnhetOppdateringProgresjon(
+                oppdateringId = rs.getInt(OPPDATERING_ID),
+                enhetType = rs.getString(ENHET_TYPE).toDomainEnhetType(),
+            )
+        }
 
-		jdbcTemplate.update(sql, oppdateringId, enhetType.name)
-	}
+        fun EnhetType.toDatabaseValue(): String = when (this) {
+            EnhetType.MODERENHET -> "MODERENHET"
+            EnhetType.UNDERENHET -> "UNDERENHET"
+        }
 
+        fun String.toDomainEnhetType(): EnhetType = when (this) {
+            "MODERENHET" -> EnhetType.MODERENHET
+            "UNDERENHET" -> EnhetType.UNDERENHET
+            else -> throw IllegalArgumentException("Ukjent enhet_type i databasen: $this")
+        }
+    }
 }

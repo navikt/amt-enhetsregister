@@ -11,32 +11,31 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
 class KafkaProducerServiceTest(
-	private val kafkaProducerService: KafkaProducerService,
-	private val kafkaTopicProperties: KafkaTopicProperties,
+    private val kafkaProducerService: KafkaProducerService,
+    private val kafkaTopicProperties: KafkaTopicProperties,
 ) : IntegrationTest() {
+    @Test
+    fun `skal publisere virksomhet pa topic`() {
+        val virksomhetV1Dto = VirksomhetV1Dto(
+            organisasjonsnummer = "123456789",
+            navn = "Orgnavn",
+            overordnetEnhetOrganisasjonsnummer = "987654321",
+        )
 
-	@Test
-	fun `skal publisere virksomhet pa topic`() {
-		val virksomhetV1Dto = VirksomhetV1Dto(
-			organisasjonsnummer = "123456789",
-			navn = "Orgnavn",
-			overordnetEnhetOrganisasjonsnummer = "987654321",
-		)
+        kafkaProducerService.publiserVirksomhet(virksomhetV1Dto)
 
-		kafkaProducerService.publiserVirksomhet(virksomhetV1Dto)
+        await().untilAsserted {
+            val records: ConsumerRecords<String, String>? =
+                KafkaMessageConsumer.consume(kafkaTopicProperties.virksomheterTopic)
 
-		await().untilAsserted {
-			val records: ConsumerRecords<String, String>? =
-				KafkaMessageConsumer.consume(kafkaTopicProperties.virksomheterTopic)
+            assertNotNull(records)
 
-			assertNotNull(records)
+            val record = records?.first()
+            assertEquals(virksomhetV1Dto.organisasjonsnummer, record?.key().toString())
 
-			val record = records?.first()
-			assertEquals(virksomhetV1Dto.organisasjonsnummer, record?.key().toString())
-
-			val expectedJson =
-				"""{"organisasjonsnummer":"123456789","navn":"Orgnavn","overordnetEnhetOrganisasjonsnummer":"987654321"}""".trimIndent()
-			assertEquals(record?.value(), expectedJson)
-		}
-	}
+            val expectedJson =
+                """{"organisasjonsnummer":"123456789","navn":"Orgnavn","overordnetEnhetOrganisasjonsnummer":"987654321"}""".trimIndent()
+            assertEquals(record?.value(), expectedJson)
+        }
+    }
 }
