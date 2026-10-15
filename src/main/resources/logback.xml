@@ -11,4 +11,6 @@
     <root level="${ROOT_LOG_LEVEL:-INFO}">
         <appender-ref ref="stdout_json"/>
     </root>
+
+    <logger name="no.nav.common.rest.filter.LogRequestFilter" level="DEBUG"/>
 </configuration>
