@@ -21,10 +21,10 @@ repositories {
 
 val jacksonModuleKotlinVersion = "3.2.3"
 val commonVersion = "4.2026.09.24_06.17-80dfc0eacb29"
-val amtLibVersion = "1.2026.10.05_12.51-509ff28b4464"
+val amtLibVersion = "1.2026.10.19_09.36-cd6864010aea"
 val logstashEncoderVersion = "9.0"
 val shedlockVersion = "7.10.1"
-val mockOauth2ServerVersion = "6.0.7"
+val mockOauth2ServerVersion = "6.1.2"
 val mockkVersion = "1.14.11"
 val springMockkVersion = "5.0.1"
 
