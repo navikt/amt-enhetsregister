@@ -19,7 +19,7 @@ repositories {
     maven("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
 }
 
-val jacksonModuleKotlinVersion = "3.2.3"
+val jacksonModuleKotlinVersion = "3.2.4"
 val commonVersion = "4.2026.09.24_06.17-80dfc0eacb29"
 val amtLibVersion = "1.2026.10.19_09.36-cd6864010aea"
 val logstashEncoderVersion = "9.0"
@@ -31,8 +31,8 @@ val springMockkVersion = "5.0.1"
 // Override Spring Boot's managed Jackson versions to apply the security fixes in 3.1.7.
 dependencyManagement {
     dependencies {
-        dependency("tools.jackson.core:jackson-core:3.1.7")
-        dependency("tools.jackson.core:jackson-databind:3.1.7")
+        dependency("tools.jackson.core:jackson-core:3.2.4")
+        dependency("tools.jackson.core:jackson-databind:3.2.4")
     }
 }
 
